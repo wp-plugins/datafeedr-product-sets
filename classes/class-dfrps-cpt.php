@@ -380,13 +380,15 @@ class Dfrps_Cpt {
 	 */
 	function admin_body_class( $classes ) {
 		global $post;
-		$post_type = get_post_type( $post->ID );
-		$post_class = $post_type . '_admin';
-		if ( $post_type == DFRPS_CPT ) {
-			if ( is_array($classes) ) {
-				$classes[] = $post_class;
-			} else {
-				$classes .= " {$post_class}";
+		if ( is_object( $post ) ) {
+			$post_type = get_post_type( $post->ID );
+			$post_class = $post_type . '_admin';
+			if ( $post_type == DFRPS_CPT ) {
+				if ( is_array($classes) ) {
+					$classes[] = $post_class;
+				} else {
+					$classes .= " {$post_class}";
+				}
 			}
 		}
 		return $classes;

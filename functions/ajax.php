@@ -35,11 +35,11 @@ function dfrps_ajax_dashboard() {
 	$post_status 		= get_post_status( $postid );
 	$meta 				= get_post_custom( $postid );
 	$update_phase 		= intval( $meta['_dfrps_cpt_update_phase'][0] );
-	$next_update_time 	= $meta['_dfrps_cpt_next_update_time'][0];
+	$next_update_time 	= isset( $meta['_dfrps_cpt_next_update_time'][0] ) ? $meta['_dfrps_cpt_next_update_time'][0] : false;
 	$last_update_time 	= $meta['_dfrps_cpt_last_update_time_completed'][0];
-	$temp_query 		= $meta['_dfrps_cpt_temp_query'][0];
-	$saved_query 		= $meta['_dfrps_cpt_query'][0];
-	$categories 		= unserialize( $meta['_dfrps_cpt_categories'][0] ); // a:1:{s:7:"product";a:0:{}}
+	$temp_query 		= isset( $meta['_dfrps_cpt_temp_query'][0] ) ? $meta['_dfrps_cpt_temp_query'][0] : false;
+	$saved_query 		= isset( $meta['_dfrps_cpt_query'][0] ) ? $meta['_dfrps_cpt_query'][0] : false;
+	$categories 		= isset( $meta['_dfrps_cpt_categories'][0] ) ? unserialize( $meta['_dfrps_cpt_categories'][0] ) : false; // a:1:{s:7:"product";a:0:{}}
 		
 	$cats_query = false;
 	if ( is_array( $categories ) ) {
@@ -472,7 +472,8 @@ function dfrps_ajax_get_products() {
 	if ( $context == 'div_dfrps_tab_saved_search' ) {
 		
 		// Isolate the query
-		parse_str( $_REQUEST['query'], $query );
+		// @TODO - remove this line as I don't think it's needed anymore.
+		// parse_str( $_REQUEST['query'], $query );
 		
 		// Get query
 		$saved_query = get_post_meta( $postid, '_dfrps_cpt_query', true ); 
@@ -495,7 +496,7 @@ function dfrps_ajax_get_products() {
 		}
 				
 		// Print any errors.
-		if ( is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
+		if ( isset( $data ) && is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
 			echo dfrapi_output_api_error( $data );
 			die;
 		}
@@ -526,7 +527,7 @@ function dfrps_ajax_get_products() {
 		}		
 		
 		// Print any errors.
-		if ( is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
+		if ( isset( $data) && is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
 			echo dfrapi_output_api_error( $data );
 			die;
 		}
@@ -554,7 +555,7 @@ function dfrps_ajax_get_products() {
 		}
 		
 		// Print any errors.
-		if ( is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
+		if ( isset( $data) && is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
 			echo dfrapi_output_api_error( $data );
 			die;
 		}
