@@ -23,7 +23,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		}
 	
 		function admin_notice() {
-			if ( $_GET['settings-updated'] == true && $this->page == $_GET['page'] ) {
+			if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == true && $this->page == $_GET['page'] ) {
 				echo '<div class="updated"><p>';
 				_e( 'Configuration successfully updated!', DFRPS_DOMAIN );
 				echo '</p></div>';

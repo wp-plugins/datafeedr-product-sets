@@ -104,6 +104,8 @@ class Dfrps_Cpt {
 		global $post;
 		if ($post->post_status == 'future') {
 			$future_time = get_post_time( 'M j, Y @ G:i', false, $post );
+		} else {
+			$future_time = false;
 		}
 		$messages[DFRPS_CPT] = array(
 			 0 => '', // Unused. Messages start at index 1.
@@ -628,11 +630,13 @@ class Dfrps_Cpt {
 		
 		add_post_meta( $post_id, '_dfrps_cpt_update_phase', 0, true );
 				
-		if ( $_POST['post_status'] != 'publish' && $_POST['post_status'] != 'future' ) {
+		if ( isset( $_POST['post_status'] ) && $_POST['post_status'] != 'publish' && $_POST['post_status'] != 'future' ) {
 			//add_post_meta( $post_id, '_dfrps_cpt_next_update_time', 3314430671, true );
 		} else {
-			$publish_time = get_the_time( 'U', $_POST['ID'] );
-			//add_post_meta( $post_id, '_dfrps_cpt_next_update_time', $publish_time, true );		
+			if ( isset( $_POST['ID'] ) ) {
+				$publish_time = get_the_time( 'U', $_POST['ID'] );
+				//add_post_meta( $post_id, '_dfrps_cpt_next_update_time', $publish_time, true );
+			}	
 		}
 		
 		add_post_meta( $post_id, '_dfrps_cpt_last_update_time_started', 0, true );
