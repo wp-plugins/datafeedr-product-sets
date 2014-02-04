@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Datafeedr Product Sets
-Version: 0.9.3
+Version: 0.9.4
 Plugin URI: https://v4.datafeedr.com
 Description: Build sets of products to import into your website. <strong>REQUIRES: </strong><a href="http://wordpress.org/plugins/datafeedr-api/">Datafeedr API plugin</a> and an <a href="http://wordpress.org/plugins/tags/dfrpsimporter">importer plugin</a>.
 Author: Datafeedr
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Define constants.
  */
-define( 'DFRPS_VERSION', 	'0.9.3' );
+define( 'DFRPS_VERSION', 	'0.9.4' );
 define( 'DFRPS_URL', 		plugin_dir_url( __FILE__ ) );
 define( 'DFRPS_PATH', 		plugin_dir_path( __FILE__ ) );
 define( 'DFRPS_BASENAME', 	plugin_basename( __FILE__ ) );
@@ -68,6 +68,19 @@ function dfrps_missing_importer() {
 		echo ' <a href="http://wordpress.org/plugins/tags/dfrpsimporter">';
 		echo  __( 'Download an Importer Plugin', DFRPS_DOMAIN );
 		echo '</a></p></div>';		
+	}
+}
+
+/**
+ * Notify user if a default CPT hasn't been selected.
+ */
+add_action( 'admin_notices', 'dfrps_default_cpt_not_selected' );
+function dfrps_default_cpt_not_selected() {
+	if ( !dfrps_default_cpt_is_selected() ) {
+		echo '<div class="update-nag" style="border-color: red;"><p>' . __( 'The <strong>Datafeedr Product Sets</strong> plugin requires you to', DFRPS_DOMAIN );
+		echo ' <a href="' . admin_url( 'admin.php?page=dfrps_configuration' ) . '">';
+		echo  __( 'select a Default Custom Post Type', DFRPS_DOMAIN );
+		echo '</a>.</p></div>';		
 	}
 }
 
