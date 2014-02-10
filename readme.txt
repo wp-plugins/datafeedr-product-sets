@@ -4,7 +4,7 @@ Contributors: datafeedr
 Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 Requires at least: 3.8
 Tested up to: 3.8.1
-Stable tag: 0.9.3
+Stable tag: 0.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,7 +45,7 @@ We currently have one importer which imports products from your Product Sets int
 * WordPress Cron enabled.
 * 64MB of memory ([instructions](http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP)).
 * PHP's `allow_url_fopen` must be `On`.
-* An importer plugin to handle importing products from your Product Sets into your website.
+* An [importer plugin](http://wordpress.org/plugins/tags/dfrpsimporter) to handle importing products from your Product Sets into your website.
 
 == Installation ==
 
@@ -72,6 +72,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 0.9.4 =
+* Added a nag if a default CPT had not been selected.
+* Fixed undefined indexes.
 
 = 0.9.3 =
 * Initial release.
