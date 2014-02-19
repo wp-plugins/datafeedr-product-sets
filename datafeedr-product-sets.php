@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Datafeedr Product Sets
-Version: 0.9.4
+Version: 0.9.5
 Plugin URI: https://v4.datafeedr.com
 Description: Build sets of products to import into your website. <strong>REQUIRES: </strong><a href="http://wordpress.org/plugins/datafeedr-api/">Datafeedr API plugin</a> and an <a href="http://wordpress.org/plugins/tags/dfrpsimporter">importer plugin</a>.
 Author: Datafeedr
@@ -10,8 +10,8 @@ License: GPL v3
 Requires at least: 3.8
 Tested up to: 3.8.1
 
-Datafeedr API Plugin
-Copyright (C) 2013, Datafeedr - api@datafeedr.com
+Datafeedr Product Sets Plugin
+Copyright (C) 2014, Datafeedr - eric@datafeedr.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Define constants.
  */
-define( 'DFRPS_VERSION', 	'0.9.4' );
+define( 'DFRPS_VERSION', 	'0.9.5' );
 define( 'DFRPS_URL', 		plugin_dir_url( __FILE__ ) );
 define( 'DFRPS_PATH', 		plugin_dir_path( __FILE__ ) );
 define( 'DFRPS_BASENAME', 	plugin_basename( __FILE__ ) );

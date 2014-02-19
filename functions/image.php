@@ -109,7 +109,7 @@ function dfrps_fetch_remote_file( $url, $post ) {
 	$ext = image_type_to_extension($size[2]);
 
 	// extract the file name and extension from the url
-	$file_name = sanitize_title($post['post_title']).'-'.$post['post_id'].$ext;
+	$file_name = sanitize_title( $post['post_title'] ) . '-' . $post['post_parent'] . $ext;
 
 	// get placeholder file in the upload dir with a unique, sanitized filename
 	$upload = wp_upload_bits( $file_name, null, file_get_contents($url) );

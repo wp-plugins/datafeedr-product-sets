@@ -806,16 +806,16 @@ class Dfrps_Cpt {
 		$post 				= $GLOBALS['post'];
 		$meta 				= get_post_custom( $post->ID );
 		$completed 			= $meta['_dfrps_cpt_last_update_time_completed'][0];
-		$update_errors 		= unserialize( $meta['_dfrps_cpt_errors'][0] );
+		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : array();
 				
 		// Show last update stats
 		if ( $completed == 0 ) {
 			// Is updating now or has never updated.
 			// Show values from '_dfrps_cpt_previous_update_info' meta field if exists.
-			$meta = unserialize( $meta['_dfrps_cpt_previous_update_info'][0] );
+			$meta = ( isset( $meta['_dfrps_cpt_previous_update_info'][0] ) ) ? unserialize( $meta['_dfrps_cpt_previous_update_info'][0] ) : array();
 		}
 		
-		if ( ( $meta['_dfrps_cpt_last_update_time_completed'][0] == 0 ) ) {
+		if ( !isset( $meta['_dfrps_cpt_last_update_time_completed'][0] ) ) {
 		
 			echo __( 'This Product Set has never been imported.', DFRPS_DOMAIN );
 		

@@ -4,7 +4,7 @@ Contributors: datafeedr
 Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 Requires at least: 3.8
 Tested up to: 3.8.1
-Stable tag: 0.9.4
+Stable tag: 0.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 0.9.5 =
+* Fixed more undefined indexes.
+* Updated plugin information.
 
 = 0.9.4 =
 * Added a nag if a default CPT had not been selected.

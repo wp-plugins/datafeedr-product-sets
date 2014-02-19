@@ -101,7 +101,7 @@ if ( !function_exists( 'dfrps_html_product_list' ) ) {
 								<span class="bullet">&bull;</span>
 								<span class="label"><?php echo substr( $product['merchant'], 0, 25 ); ?></span>
 							</div>
-							<?php if ( $product['brand'] != '' ) : ?>
+							<?php if ( isset( $product['brand'] ) ) : ?>
 								<div class="brand" title="<?php echo __('Brand', DFRPS_DOMAIN ) . ': ' . esc_attr( $product['brand'] ); ?>">
 									<span class="bullet">&bull;</span>
 									<span class="label"><?php echo $product['brand']; ?></span>
