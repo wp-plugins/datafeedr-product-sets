@@ -89,7 +89,9 @@ if ( !function_exists( 'dfrps_html_product_list' ) ) {
 					<td class="info" colspan="2">
 				
 						<div class="description">
-							<?php echo strip_tags( $product['description'] ); ?>
+							<?php if ( isset( $product['description'] ) ) : ?>
+								<?php echo strip_tags( $product['description'] ); ?>
+							<?php endif; ?>
 						</div>
 				
 						<div class="details">				

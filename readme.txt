@@ -73,6 +73,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 
 == Changelog ==
 
+= 0.9.6 =
+* Fixed more undefined indexes.
+
 = 0.9.5 =
 * Fixed more undefined indexes.
 * Updated plugin information.
