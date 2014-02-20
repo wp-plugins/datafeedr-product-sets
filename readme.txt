@@ -18,6 +18,11 @@ Build sets of products to import into your website.
 
 A Product Set is a collection of related products. Once you create a Product Set, the products in that set will be imported into your website (via an importer plugin). The Product Set is also responsible for updating those imported products with the newest information at an interval you choose.
 
+The *Datafeedr Product Sets* plugin currently integrates with the following plugins:
+
+* [Datafeedr WooCommerce Importer](http://wordpress.org/plugins/datafeedr-woocommerce-importer/)
+* [Datafeedr API](http://wordpress.org/plugins/datafeedr-api/)
+
 **How does it work?**
 
 1. Create a new Product Set by performing a product search for specific keywords.  In this example lets use "rock climbing shoes" as our keywords.
