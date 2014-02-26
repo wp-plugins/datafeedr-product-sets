@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Datafeedr Product Sets
-Version: 0.9.6
+Version: 0.9.7
 Plugin URI: https://v4.datafeedr.com
 Description: Build sets of products to import into your website. <strong>REQUIRES: </strong><a href="http://wordpress.org/plugins/datafeedr-api/">Datafeedr API plugin</a> and an <a href="http://wordpress.org/plugins/tags/dfrpsimporter">importer plugin</a>.
-Author: Datafeedr
+Author: datafeedr.com
 Author URI: https://v4.datafeedr.com
 License: GPL v3
 Requires at least: 3.8
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Define constants.
  */
-define( 'DFRPS_VERSION', 	'0.9.6' );
+define( 'DFRPS_VERSION', 	'0.9.7' );
 define( 'DFRPS_URL', 		plugin_dir_url( __FILE__ ) );
 define( 'DFRPS_PATH', 		plugin_dir_path( __FILE__ ) );
 define( 'DFRPS_BASENAME', 	plugin_basename( __FILE__ ) );

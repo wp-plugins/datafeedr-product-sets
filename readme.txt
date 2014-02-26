@@ -1,6 +1,6 @@
 === Datafeedr Product Sets ===
 
-Contributors: datafeedr
+Contributors: datafeedr.com
 Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 Requires at least: 3.8
 Tested up to: 3.8.1
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 0.9.7 =
+* Updated "Contributors" and "Author" fields to match WP.org username.
 
 = 0.9.6 =
 * Fixed more undefined indexes.
