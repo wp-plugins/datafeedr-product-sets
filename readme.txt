@@ -4,7 +4,7 @@ Contributors: datafeedr.com
 Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 Requires at least: 3.8
 Tested up to: 3.8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.0.1 =
+* Fixed undefined indexes.
+* Added do_action() to the beginning and end of each phase in the Update and Delete class.
 
 = 1.0.0 =
 * Updated "Contributors" and "Author" fields to match WP.org username.
