@@ -85,6 +85,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 				'default_filters' => array(),
 				'cron_interval' => 60,
 				'updates_enabled' => 'enabled',
+				'cron_dispatcher' => 'wp-cron', // wp-cron OR dfrps-cron (currently not available)
 			);
 		}
 		
@@ -112,6 +113,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 			add_settings_section( 'advanced-update', __( 'Advanced Update Settings', DFRPS_DOMAIN ), array( &$this, 'section_advanced_update_desc' ), $this->page );
 			add_settings_field( 'update_interval', __( 'Update Interval', DFRPS_DOMAIN ), array( &$this, 'field_update_interval' ), $this->page, 'advanced-update' );
 			add_settings_field( 'cron_interval', __( 'Cron Interval', DFRPS_DOMAIN ), array( &$this, 'field_cron_interval' ), $this->page, 'advanced-update' );
+			// add_settings_field( 'cron_dispatcher', __( 'Cron Dispatcher', DFRPS_DOMAIN ), array( &$this, 'field_cron_dispatcher' ), $this->page, 'advanced-update' );
 			add_settings_field( 'num_products_per_update', __( 'Products per Update', DFRPS_DOMAIN ), array( &$this, 'field_num_products_per_update' ), $this->page, 'advanced-update' );
 			add_settings_field( 'preprocess_maximum', __( 'Preprocess Maximum', DFRPS_DOMAIN ), array( &$this, 'field_preprocess_maximum' ), $this->page, 'advanced-update' );
 			add_settings_field( 'postprocess_maximum', __( 'Postprocess Maximum', DFRPS_DOMAIN ), array( &$this, 'field_postprocess_maximum' ), $this->page, 'advanced-update' );
@@ -250,6 +252,14 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 			<?php  
 		}
 		
+		function field_cron_dispatcher() {
+			?>
+			<p><input type="radio" value="wp-cron" name="<?php echo $this->key; ?>[cron_dispatcher]" <?php checked( $this->options['cron_dispatcher'], 'wp-cron', true ); ?> /> <?php _e( 'WordPress', DFRPS_DOMAIN ); ?></p>
+			<p><input type="radio" value="dfrps-cron" name="<?php echo $this->key; ?>[cron_dispatcher]" <?php checked( $this->options['cron_dispatcher'], 'dfrps-cron', true ); ?> /> <?php _e( 'Datafeedr', DFRPS_DOMAIN ); ?></p>
+			<p class="description"><?php _e( 'If your Product Sets are not automatically updating, select the "Datafeedr" option. Otherwise, use the "WordPress" option.', DFRPS_DOMAIN ); ?></p>
+			<?php
+		}
+		
 		function field_num_products_per_update() {
 			?>
 			<select id="num_products_per_update" name="<?php echo $this->key; ?>[num_products_per_update]">
@@ -318,6 +328,17 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 						$new_input['cron_interval'] = $value;
 					}
 				}
+			
+				/*
+				// Validate "cron_dispatcher"
+				if ( $key == 'cron_dispatcher' ) {
+					if ( $value == 'dfrps-cron' ) {
+						$new_input['cron_dispatcher'] = 'dfrps-cron';
+					} else {
+						$new_input['cron_dispatcher'] = 'wp-cron';					
+					}
+				}
+				*/			
 			
 				// Validate "num_products_per_update"
 				if ( $key == 'num_products_per_update' ) {

@@ -96,6 +96,7 @@ class Dfrps_Delete {
 	
 		$this->phase = 1;
 
+		do_action( 'dfrps_begin_phase', $this );
 		do_action( 'dfrps_begin_phase_1', $this );
 						
 		if( $this->is_first_pass() ) {
@@ -127,9 +128,11 @@ class Dfrps_Delete {
 		// Move to phase 2 ONLY if all posts have been unset from their categories.
 		if ( $preprocess_complete ) {
 			$this->phase = 2;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 2 );
 		}
 		
+		do_action( 'dfrps_end_phase', $this );
 		do_action( 'dfrps_end_phase_1', $this );
 		return;	
 	}
@@ -138,6 +141,8 @@ class Dfrps_Delete {
 	function phase2() {
 	
 		$this->phase = 2;
+		
+		do_action( 'dfrps_begin_phase', $this );
 				
 		if( $this->is_first_pass() ) {	
 			// Set postprocess incomplete for each CPT that this set imports into.
@@ -156,9 +161,11 @@ class Dfrps_Delete {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_next_update_time', 3314430671 );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_time_completed', date_i18n( 'U' ) );
 			$this->phase = 0;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 0 );
 		}
 		
+		do_action( 'dfrps_end_phase', $this );
 		do_action( 'dfrps_end_phase_2', $this );
 		return;
 	}

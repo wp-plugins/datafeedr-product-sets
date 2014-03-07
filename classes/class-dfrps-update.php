@@ -516,7 +516,8 @@ class Dfrps_Update {
 	function phase1() {
 	
 		$this->phase = 1;
-
+		
+		do_action( 'dfrps_begin_phase', $this );
 		do_action( 'dfrps_begin_phase_1', $this );
 						
 		if( $this->is_first_pass() ) {
@@ -550,9 +551,11 @@ class Dfrps_Update {
 		// Move to phase 2 ONLY if all posts have been unset from their categories.
 		if ( $preprocess_complete ) {
 			$this->phase = 2;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 2 );
 		}
 		
+		do_action( 'dfrps_end_phase', $this );
 		do_action( 'dfrps_end_phase_1', $this );
 		return;	
 	}
@@ -562,6 +565,7 @@ class Dfrps_Update {
 		
 		$this->phase = 2;
 
+		do_action( 'dfrps_begin_phase', $this );
 		do_action( 'dfrps_begin_phase_2', $this );
 		$this->count_iteration();
 		
@@ -570,6 +574,7 @@ class Dfrps_Update {
 		// Check that a saved search exists and move on if it doesn't.
 		if ( empty( $query ) ) {
 			$this->phase = 3;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 3 );
 			$this->phase3();
 			do_action( 'dfrps_end_phase_2', $this );
@@ -594,6 +599,7 @@ class Dfrps_Update {
 		if ( is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', $data );
 			$this->handle_error( $data );
+			do_action( 'dfrps_end_phase', $this );
 			do_action( 'dfrps_end_phase_2', $this );
 			return;
 		}
@@ -611,6 +617,7 @@ class Dfrps_Update {
 		if ( !isset( $data['products'] ) || empty( $data['products'] ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
 			$this->phase = 3;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 3 );
 			do_action( 'dfrps_end_phase_2', $this );
 			return;
@@ -626,11 +633,13 @@ class Dfrps_Update {
 		if ( ( count( $data['products'] ) < $this->config['num_products_per_update'] ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
 			$this->phase = 3;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 3 );
 			do_action( 'dfrps_end_phase_2', $this );
 			return;		
 		}
 		
+		do_action( 'dfrps_end_phase', $this );
 		do_action( 'dfrps_end_phase_2', $this );
 		return;
 	}
@@ -640,6 +649,7 @@ class Dfrps_Update {
 	
 		$this->phase = 3;
 
+		do_action( 'dfrps_begin_phase', $this );
 		do_action( 'dfrps_begin_phase_2', $this );
 		$this->count_iteration();
 			
@@ -650,6 +660,7 @@ class Dfrps_Update {
 		// If no IDs, update phase and go to Phase 3.
 		if ( empty( $ids ) ) {
 			$this->phase = 4;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 4 );
 			$this->phase4();
 			do_action( 'dfrps_end_phase_3', $this );
@@ -666,6 +677,7 @@ class Dfrps_Update {
 		if ( is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', $data );
 			$this->handle_error( $data );
+			do_action( 'dfrps_end_phase', $this );
 			do_action( 'dfrps_end_phase_3', $this );
 			return;
 		}
@@ -683,6 +695,7 @@ class Dfrps_Update {
 		if ( !isset( $data['products'] ) || empty( $data['products'] ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
 			$this->phase = 4;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 4 );
 			do_action( 'dfrps_end_phase_3', $this );
 			return;
@@ -698,11 +711,13 @@ class Dfrps_Update {
 		if ( ( count( $data['products'] ) < $this->config['num_products_per_update'] ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
 			$this->phase = 4;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 4 );
 			do_action( 'dfrps_end_phase_3', $this );
 			return;
 		}
-
+		
+		do_action( 'dfrps_end_phase', $this );
 		do_action( 'dfrps_end_phase_3', $this );
 		return;
 	}
@@ -711,7 +726,8 @@ class Dfrps_Update {
 	function phase4() {
 	
 		$this->phase = 4;
-
+		
+		do_action( 'dfrps_begin_phase', $this );
 		do_action( 'dfrps_begin_phase_4', $this );
 		$this->count_iteration();
 				
@@ -736,9 +752,11 @@ class Dfrps_Update {
 			
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_time_completed', date_i18n( 'U' ) );
 			$this->phase = 0;
+			do_action( 'dfrps_end_phase', $this );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 0 );
 		}
 		
+		do_action( 'dfrps_end_phase', $this );
 		do_action( 'dfrps_end_phase_4', $this );
 		return;
 	}

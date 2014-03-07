@@ -113,7 +113,7 @@ if ( !function_exists( 'dfrps_html_product_list' ) ) {
 								<span class="bullet">&bull;</span>
 								<span class="label"><?php echo dfrapi_currency_code_to_sign( $currency ); ?><?php echo dfrapi_int_to_price( $product['price'] ); ?></span>
 							</div>
-							<?php if ( $product['onsale'] == 1 ) : ?>
+							<?php if ( isset( $product['onsale'] ) && ( $product['onsale'] == 1 ) ) : ?>
 								<div class="saleprice" title="<?php echo __('Sale Price', DFRPS_DOMAIN ) . ': ' . esc_attr( dfrapi_currency_code_to_sign( $currency ) . dfrapi_int_to_price( $product['saleprice'] ) . ' ' . $currency ); ?>">
 									<span class="bullet">&bull;</span>
 									<span class="label"><?php echo dfrapi_currency_code_to_sign( $currency ); ?><?php echo dfrapi_int_to_price( $product['saleprice'] ); ?></span>
