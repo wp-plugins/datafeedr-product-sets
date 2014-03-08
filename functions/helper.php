@@ -448,3 +448,7 @@ function dfrps_default_cpt_is_selected() {
 	}
 	return FALSE;
 }		
+
+function dfrps_set_html_content_type() {
+	return 'text/html';
+}

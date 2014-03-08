@@ -78,6 +78,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 
 == Changelog ==
 
+= 1.0.2
+* Changed contents of 'product set updates disabled' email.
+* Converted emails sent from plain text to HTML.
+
 = 1.0.1 =
 * Fixed undefined indexes.
 * Added do_action() to the beginning and end of each phase in the Update and Delete class.
