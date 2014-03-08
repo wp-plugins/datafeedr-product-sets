@@ -449,7 +449,7 @@ class Dfrps_Cpt {
 		$products_added 	= number_format( intval( $meta['_dfrps_cpt_last_update_num_products_added'][0] ) );
 		$api_requests 		= number_format( intval( $meta['_dfrps_cpt_last_update_num_api_requests'][0] ) );
 		$products_deleted 	= number_format( intval( $meta['_dfrps_cpt_last_update_num_products_deleted'][0] ) );
-		$update_errors 		= unserialize( $meta['_dfrps_cpt_errors'][0] );
+		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : array();
 		
 		switch ( $column ) {
 

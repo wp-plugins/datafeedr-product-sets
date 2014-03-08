@@ -81,6 +81,7 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 = 1.0.2
 * Changed contents of 'product set updates disabled' email.
 * Converted emails sent from plain text to HTML.
+* Fixed undefined indexes.
 
 = 1.0.1 =
 * Fixed undefined indexes.
