@@ -51,9 +51,10 @@ class Dfrps_Cpt {
 			isset( $_GET['post_type'] ) && 
 			$_GET['post_type'] == DFRPS_CPT && 
 			!isset( $_GET['orderby'] ) &&
-			( @$_GET['post_status'] != 'draft' )
+			!isset( $_GET['post_status'] )
 		)  
 		{
+			$query->query_vars['post_status'] = 'publish';
 			$query->query_vars['order'] = 'asc';
 			$query->query_vars['orderby'] = 'meta_value';
 			$query->query_vars['meta_key'] = '_dfrps_cpt_next_update_time';
@@ -443,13 +444,13 @@ class Dfrps_Cpt {
 		$meta 				= get_post_custom( $post_id );
 		
 		$update_phase 		= intval( $meta['_dfrps_cpt_update_phase'][0] );
-		$next_update_time 	= $meta['_dfrps_cpt_next_update_time'][0];
-		$started 			= $meta['_dfrps_cpt_last_update_time_started'][0];
-		$completed 			= $meta['_dfrps_cpt_last_update_time_completed'][0];
-		$products_added 	= number_format( intval( $meta['_dfrps_cpt_last_update_num_products_added'][0] ) );
-		$api_requests 		= number_format( intval( $meta['_dfrps_cpt_last_update_num_api_requests'][0] ) );
-		$products_deleted 	= number_format( intval( $meta['_dfrps_cpt_last_update_num_products_deleted'][0] ) );
-		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : array();
+		$next_update_time 	= ( isset( $meta['_dfrps_cpt_next_update_time'][0] ) ) ? $meta['_dfrps_cpt_next_update_time'][0] : 0;
+		$started 			= ( isset( $meta['_dfrps_cpt_last_update_time_started'][0] ) ) ? $meta['_dfrps_cpt_last_update_time_started'][0] : 0;
+		$completed 			= ( isset( $meta['_dfrps_cpt_last_update_time_completed'][0] ) ) ? $meta['_dfrps_cpt_last_update_time_completed'][0] : 0;
+		$products_added 	= ( isset( $meta['_dfrps_cpt_last_update_num_products_added'][0] ) ) ? number_format( intval( $meta['_dfrps_cpt_last_update_num_products_added'][0] ) ) : 0;
+		$api_requests 		= ( isset( $meta['_dfrps_cpt_last_update_num_api_requests'][0] ) ) ? number_format( intval( $meta['_dfrps_cpt_last_update_num_api_requests'][0] ) ) : 0;
+		$products_deleted 	= ( isset( $meta['_dfrps_cpt_last_update_num_products_deleted'][0] ) ) ? number_format( intval( $meta['_dfrps_cpt_last_update_num_products_deleted'][0] ) ) : 0;
+		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : '';
 		
 		switch ( $column ) {
 
@@ -806,7 +807,7 @@ class Dfrps_Cpt {
 		$post 				= $GLOBALS['post'];
 		$meta 				= get_post_custom( $post->ID );
 		$completed 			= $meta['_dfrps_cpt_last_update_time_completed'][0];
-		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : array();
+		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : '';
 				
 		// Show last update stats
 		if ( $completed == 0 ) {

@@ -13,6 +13,7 @@ class Dfrps_Initialize {
 		// Load required classes.
 		require_once( DFRPS_PATH . 'classes/class-dfrps-cpt.php' );				// Custom post type for "Product Sets".
 		require_once( DFRPS_PATH . 'classes/class-dfrps-configuration.php' );	// Configuration page.
+		require_once( DFRPS_PATH . 'classes/class-dfrps-tools.php' );			// Tools page.
 		require_once( DFRPS_PATH . 'classes/class-dfrps-help.php' );			// Help tabs.
 		
 		// Hooks
@@ -62,6 +63,7 @@ class Dfrps_Initialize {
 			new Dfrps_Cpt();
 		}
 		new Dfrps_Configuration();
+		new Dfrps_Tools();
 	}
 	
 	function load_css() {

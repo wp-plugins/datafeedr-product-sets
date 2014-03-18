@@ -42,9 +42,22 @@ if ( !wp_next_scheduled( 'dfrps_cron' ) ) {
 add_action( 'dfrps_cron', 'dfrps_get_product_set_to_update' );
 function dfrps_get_product_set_to_update() {
 
+	// Check that updates are enabled.
 	$options = get_option( 'dfrps_configuration', array() );
 	if ( $options['updates_enabled'] == 'disabled' ) {
 		return;
+	}
+
+	// Check that at least 1 network is selected.
+	$networks = (array) get_option( 'dfrapi_networks' );
+	if ( empty( $networks['ids'] ) ) {
+		return true;
+	}
+
+	// Check that at least 1 merchant is selected.
+	$merchants = (array) get_option( 'dfrapi_merchants' );
+	if ( empty( $merchants['ids'] ) ) {
+		return true;
 	}
 		
 	global $wpdb;

@@ -2,7 +2,7 @@
 
 Contributors: datafeedr.com
 Tags: datafeedr, product sets, dfrapi, dfrps, import, products
-Requires at least: 3.8
+Requires at least: 3.9-beta1
 Tested up to: 3.8.1
 Stable tag: 1.0.1
 License: GPLv2 or later
@@ -78,10 +78,15 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 
 == Changelog ==
 
-= 1.0.2
+= 1.0.2 =
 * Changed contents of 'product set updates disabled' email.
 * Converted emails sent from plain text to HTML.
 * Fixed undefined indexes.
+* Added filter to $postmeta in image.php.
+* Removed screen_icon() from config page.
+* Removed filesize check from functions/image.php because we already make sure it's an image with getimagesize().
+* Added check in cron to see if at least 1 network and 1 merchant is selected before running update.
+* Added new "Tools" page to perform different actions such as reset cron and bulk import images.
 
 = 1.0.1 =
 * Fixed undefined indexes.

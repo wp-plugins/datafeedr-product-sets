@@ -63,7 +63,6 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 
 		function output() {
 			echo '<div class="wrap" id="' . $this->key . '">';
-			screen_icon();
 			echo '<h2>' . __( 'Configuration', DFRPS_DOMAIN ) . '</h2>';
 			echo '<form method="post" action="options.php">';
 			wp_nonce_field( 'update-options' );
@@ -126,7 +125,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		}
 	
 		function section_advanced_update_desc() { 
-			echo '<p class="dfrapi_warning">';
+			echo '<p class="dfrps_warning">';
 			echo '<strong>' . __( 'WARNING', DFRPS_DOMAIN ) . '</strong> - ';
 			echo __( 'Modifying the following settings could have a severely negative effect on your server. We recommend that you do not change them unless you are sure that your server can handle the change.', DFRPS_DOMAIN );
 			echo '</p>';

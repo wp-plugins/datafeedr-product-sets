@@ -12,7 +12,10 @@ function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
 	}
 	
 	// We need some postmeta so get that now.
-	$postmeta = get_post_custom( $post->ID );	
+	$postmeta = get_post_custom( $post->ID );
+	
+	// Apply filter to postmeta.
+	$postmeta = apply_filters( 'dfrps_upload_images_postmeta', $postmeta, $post );
 	
 	// Check that this post was created by the Datafeedr Products Sets plugin.
 	if ( !isset( $postmeta['_dfrps_product_set_id'][0] ) ) {
@@ -28,6 +31,7 @@ function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
 	// if ( has_post_thumbnail( $post->ID ) ) {
 	// @LINK - http://codex.wordpress.org/Function_Reference/has_post_thumbnail
 	if ( get_the_post_thumbnail( $post->ID ) != '' ) { 
+		update_post_meta( $post->ID, '_dfrps_product_check_image', 0 );	
 		return $post;
 	}
 		
@@ -59,7 +63,7 @@ function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
 
 /*
  * CODE FROM WP IMPORTER
- * ~/Development/__dfr_customers/wp-content/plugins/wordpress-importer/wordpress-importer.php
+ * ~/wp-content/plugins/wordpress-importer/wordpress-importer.php
  */
 function dfrps_process_attachment( $post, $url ) {
 
@@ -132,11 +136,6 @@ function dfrps_fetch_remote_file( $url, $post ) {
 	}
 
 	$filesize = filesize( $upload['file'] );
-
-	if ( isset( $headers['content-length'] ) && $filesize != $headers['content-length'] ) {
-		@unlink( $upload['file'] );
-		return new WP_Error( 'import_file_error', __('Remote file is incorrect size', 'wordpress-importer') );
-	}
 
 	if ( 0 == $filesize ) {
 		@unlink( $upload['file'] );

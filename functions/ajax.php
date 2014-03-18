@@ -15,6 +15,151 @@ if ( is_admin() ) {
 	add_action( 'wp_ajax_dfrps_ajax_delete_saved_search',			'dfrps_ajax_delete_saved_search' );
 	add_action( 'wp_ajax_dfrps_ajax_update_progress_bar',			'dfrps_ajax_update_progress_bar' );
 	add_action( 'wp_ajax_dfrps_ajax_dashboard',						'dfrps_ajax_dashboard' );
+	add_action( 'wp_ajax_dfrps_ajax_test_loopbacks',				'dfrps_ajax_test_loopbacks' );
+	add_action( 'wp_ajax_dfrps_ajax_reset_cron',					'dfrps_ajax_reset_cron' );
+	add_action( 'wp_ajax_dfrps_ajax_fix_missing_images',			'dfrps_ajax_fix_missing_images' );
+	add_action( 'wp_ajax_dfrps_ajax_batch_import_images',			'dfrps_ajax_batch_import_images' );
+	add_action( 'wp_ajax_dfrps_ajax_start_batch_image_import',		'dfrps_ajax_start_batch_image_import' );
+	add_action( 'wp_ajax_dfrps_ajax_stop_batch_image_import',		'dfrps_ajax_stop_batch_image_import' );
+}
+
+function dfrps_ajax_test_loopbacks() {
+	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
+	$response = wp_remote_get( admin_url( 'admin-ajax.php' ) );
+	if( is_wp_error( $response ) ) {
+		echo '<div class="dfrps_alert dfrps_alert-danger">';
+		echo '<strong>'. __( 'Error: ', DFRPS_DOMAIN ) . '</strong>';
+		if ( isset( $response->errors ) && !empty( $response->errors ) ) {
+			foreach ( $response->errors as $type => $msg ) {
+				echo $msg[0].'. ';
+			} 
+		}
+		echo '<a href="https://v4.datafeedr.com/documentation/471#loopback_workaround" target="_blank">' . __( 'Learn more', DFRPS_DOMAIN ) . '</a></div>';
+	} else {
+		echo '<div class="dfrps_alert dfrps_alert-success">';
+		echo '<strong>'. __( 'Success: ', DFRPS_DOMAIN ) . '</strong>';
+		_e( 'A loopback occurred successfully.', DFRPS_DOMAIN );
+		echo '</div>';
+	}	
+	echo '<p><strong>' . __( 'Full Response Below', DFRPS_DOMAIN ) .'</strong></p><hr />';
+	echo '<pre>'; print_r($response); echo '</pre>';
+	die;
+}
+
+function dfrps_ajax_reset_cron() {
+	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
+	wp_clear_scheduled_hook( 'dfrps_cron' );
+	wp_schedule_event( time(), 'dfrps_schedule', 'dfrps_cron' );
+	_e( 'Cron was successfully reset.', DFRPS_DOMAIN );
+	die;
+}
+
+function dfrps_ajax_fix_missing_images() {
+	
+	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
+	
+	global $wpdb;
+	
+	/**
+	 * SET '_dfrps_product_check_image' equal to 1
+	 * WHERE post_status = 'publish'
+	 * AND '_dfrps_product_check_image' equal = 0
+	 * AND _thumbnail_id = NULL
+	 */
+	$update = $wpdb->query( "
+		UPDATE $wpdb->postmeta pm1
+			JOIN $wpdb->posts AS p
+				ON p.ID = pm1.post_id
+			LEFT JOIN $wpdb->postmeta AS pm2
+				ON p.ID = pm2.post_id
+				AND pm2.meta_key = '_thumbnail_id'
+		SET pm1.meta_value = '1'
+		WHERE pm1.meta_key = '_dfrps_product_check_image'
+		AND pm1.meta_value = '0'
+		AND pm2.post_id IS NULL
+		AND p.post_status = 'publish'	
+	" );
+		
+	if ( is_integer( $update ) ) {
+		echo number_format( $update );
+		if ( $update == 0 ) {
+			 _e( ' product images need fixing at this time.', DFRPS_DOMAIN );
+		} else {
+			echo sprintf( 
+				_n( 
+					' product image is flagged to be fixed the next time it is displayed on your site.', 
+					' product images are flagged to be fixed the next they are displayed on your site.', 
+					$update, 
+					DFRPS_DOMAIN 
+				), 
+				$update 
+			);
+		}
+	} else {
+		 _e( 'There was an error with your request.', DFRPS_DOMAIN );
+		echo '<pre>'; print_r( $update ); echo '</pre>';
+	}
+	die;
+}
+
+function dfrps_ajax_start_batch_image_import() {
+	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
+	update_option( 'dfrps_do_batch_image_import', TRUE );
+	die;
+}
+
+function dfrps_ajax_stop_batch_image_import() {
+	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
+	delete_option( 'dfrps_do_batch_image_import' );
+	sleep( 2 );
+	die;
+}
+
+function dfrps_ajax_batch_import_images() {
+
+	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
+	
+	$do_import = get_option( 'dfrps_do_batch_image_import', FALSE );
+	
+	if ( !$do_import ) {
+		echo 'Stopped'; // Don't translate this. We use this value on the other side.
+		die;
+	}
+
+	global $wpdb;
+	
+	/**
+	 * SELECT id 
+	 * FROM posts
+	 * WHERE post_status = publish
+	 * AND '_dfrps_product_check_image' = 1
+	 * AND '_thumbnail_id' IS NULL
+	 */
+	$id = $wpdb->get_var( "
+		SELECT pm1.post_id AS post_id 
+		FROM $wpdb->postmeta AS pm1
+		JOIN $wpdb->posts AS p
+			ON p.ID = pm1.post_id
+		LEFT JOIN $wpdb->postmeta AS pm2
+			ON p.ID = pm2.post_id
+			AND pm2.meta_key = '_thumbnail_id'
+		WHERE pm1.meta_key = '_dfrps_product_check_image'
+		AND pm1.meta_value = '1'
+		AND pm2.post_id IS NULL
+		AND p.post_status = 'publish'	
+		ORDER BY post_id ASC
+	" );
+	
+	if ( empty( $id ) ) {
+		delete_option( 'dfrps_do_batch_image_import' );
+		echo 'Complete'; // Don't translate this. We use this value on the other side.
+		die;
+	}
+	
+	$object = get_post( $id );
+	do_action_ref_array( 'the_post', array( &$object ) );
+	echo '<div>Image imported for <a href="/?p=' .$object->ID . '" target="_blank">' . $object->post_title . '</a></div>';
+	die;
 }
 
 function dfrps_ajax_dashboard() {

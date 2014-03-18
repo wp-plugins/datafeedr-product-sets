@@ -636,12 +636,18 @@ class Dfrps_Update {
 
 		// Delete any errors that are currently being stored.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', false );
+
+		wp_defer_term_counting( true );
+		wp_defer_comment_counting( true );
 		
 		// Let the integration plugin(s) handle the group of products for this set.
 		$data['_update_offset'] = $this->meta['_dfrps_cpt_offset'][0];
 		foreach ( $this->get_cpts_to_import_into() as $cpt ) {
 			do_action( "dfrps_action_do_products_{$cpt}", $data, $this->set );
 		}
+
+		wp_defer_term_counting( false );
+		wp_defer_comment_counting( false );
 				
 		// Check for 0 products. If no products, update "Phase".
 		if ( !isset( $data['products'] ) || empty( $data['products'] ) ) {
@@ -714,12 +720,18 @@ class Dfrps_Update {
 		
 		// Delete any errors that are currently being stored.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', false );
+
+		wp_defer_term_counting( true );
+		wp_defer_comment_counting( true );
 		
 		// Let the integration plugin(s) handle the group of products for this set.
 		$data['_update_offset'] = $this->meta['_dfrps_cpt_offset'][0];
 		foreach ( $this->get_cpts_to_import_into() as $cpt ) {
 			do_action( "dfrps_action_do_products_{$cpt}", $data, $this->set );
 		}
+
+		wp_defer_term_counting( false );
+		wp_defer_comment_counting( false );
 				
 		// Check for 0 products. If no products, update "Phase".
 		if ( !isset( $data['products'] ) || empty( $data['products'] ) ) {
