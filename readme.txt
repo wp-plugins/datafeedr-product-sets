@@ -87,6 +87,7 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 * Removed filesize check from functions/image.php because we already make sure it's an image with getimagesize().
 * Added check in cron to see if at least 1 network and 1 merchant is selected before running update.
 * Added new "Tools" page to perform different actions such as reset cron and bulk import images.
+* Replaced Javascript on CPT pages to prevent conflict on onReady with other broken plugins.
 
 = 1.0.1 =
 * Fixed undefined indexes.
