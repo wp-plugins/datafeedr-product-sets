@@ -40,7 +40,7 @@ if ( ! class_exists( 'Dfrps_Tools' ) ) {
 
 		function output() {
 			echo '<div class="wrap" id="' . $this->key . '">';
-			echo '<h2>' . __( 'Datafeedr Product Sets Tools', DFRPS_DOMAIN ) . '</h2>';
+			echo '<h2>' . __( 'Tools &#8212; Datafeedr Product Sets', DFRPS_DOMAIN ) . '</h2>';
 			?>
 			
 			<script>

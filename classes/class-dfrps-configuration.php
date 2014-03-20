@@ -63,7 +63,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 
 		function output() {
 			echo '<div class="wrap" id="' . $this->key . '">';
-			echo '<h2>' . __( 'Configuration', DFRPS_DOMAIN ) . '</h2>';
+			echo '<h2>' . __( 'Configuration &#8212; Datafeedr Product Sets', DFRPS_DOMAIN ) . '</h2>';
 			echo '<form method="post" action="options.php">';
 			wp_nonce_field( 'update-options' );
 			settings_fields( $this->page );
@@ -127,7 +127,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		function section_advanced_update_desc() { 
 			echo '<p class="dfrps_warning">';
 			echo '<strong>' . __( 'WARNING', DFRPS_DOMAIN ) . '</strong> - ';
-			echo __( 'Modifying the following settings could have a severely negative effect on your server. We recommend that you do not change them unless you are sure that your server can handle the change.', DFRPS_DOMAIN );
+			echo __( 'Modifying the following settings could have severely negative effects on your server. We recommend you do not change the default settings unless you are sure that your server can handle the change.', DFRPS_DOMAIN );
 			echo '</p>';
 		}
 		
@@ -156,7 +156,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 					</tr>
 				</tbody>
 			</table>
-			<p class="description"><?php _e( 'Set the default search parameters for new Product Sets.', DFRPS_DOMAIN ); ?></p>
+			<p class="description"><?php _e( 'Set the default search parameters for creating new Product Sets.', DFRPS_DOMAIN ); ?></p>
 			<?php
 		}
 		
@@ -206,7 +206,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 			?>
 			<p><input type="radio" value="yes" name="<?php echo $this->key; ?>[updates_enabled]" <?php checked( $this->options['updates_enabled'], 'enabled', true ); ?> /> <?php _e( 'Enabled', DFRPS_DOMAIN ); ?></p>
 			<p><input type="radio" value="no" name="<?php echo $this->key; ?>[updates_enabled]" <?php checked( $this->options['updates_enabled'], 'disabled', true ); ?> /> <?php _e( 'Disabled', DFRPS_DOMAIN ); ?></p>
-			<p class="description"><?php _e( 'Enable or disable Product Set updates. Disabling updates will not immediately affect your website however over time your product data will become outdated.', DFRPS_DOMAIN ); ?></p>
+			<p class="description"><?php _e( 'Enable or disable Product Set updates. Disabling updates will not immediately affect your website, however, over time your product data will become outdated.', DFRPS_DOMAIN ); ?></p>
 			<?php
 		}
 		
@@ -228,7 +228,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 				<option value="45" <?php selected( $this->options['update_interval'], '45', true ); ?>><?php _e( 'Every 45 Days', DFRPS_DOMAIN ); ?></option>
 				<option value="60" <?php selected( $this->options['update_interval'], '60', true ); ?>><?php _e( 'Every 60 Days', DFRPS_DOMAIN ); ?></option>
 			</select>
-			<p class="description"><?php _e( 'How often a Product Set should be updated.<br />If updates are causing too much load on your server, update less frequently.', DFRPS_DOMAIN ); ?></p>
+			<p class="description"><?php _e( 'How often a Product Set will be updated.<br />If updates are causing too much load on your server, update less frequently.', DFRPS_DOMAIN ); ?></p>
 			<?php  
 		}
 		
@@ -245,7 +245,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 				<option value="1800" <?php selected( $this->options['cron_interval'], '1800', true ); ?>><?php _e( 'Every 30 minutes', DFRPS_DOMAIN ); ?></option>
 				<option value="3600" <?php selected( $this->options['cron_interval'], '3600', true ); ?>><?php _e( 'Every hour', DFRPS_DOMAIN ); ?></option>
 			</select>
-			<p class="description"><?php _e( 'How often WP Cron should check if Product Sets should be updated.<br />Increase this value if you are experiencing server load or timeout issues.', DFRPS_DOMAIN ); ?></p>
+			<p class="description"><?php _e( 'How often WordPress Cron will check if Product Sets should be updated.<br />Increase this value if you are experiencing server load or timeout issues.', DFRPS_DOMAIN ); ?></p>
 			<?php  
 		}
 				

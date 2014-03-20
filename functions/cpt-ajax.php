@@ -208,7 +208,22 @@ $nonce = wp_create_nonce( 'dfrps_ajax_nonce' );
 			.then(dfrpsGetBlockedProducts)
 			.then(dfrpsGetIncludedProducts)
 			.done(dfrpsGetSavedSearch);
-			
+
+
+		/**
+		 * Line-through title when title is filled in.
+		 */
+		var timeoutReference;
+		$('input#title').keypress(function() {
+			var _this = $(this); // copy of this object for further usage
+
+			if (timeoutReference) clearTimeout(timeoutReference);
+			timeoutReference = setTimeout(function() {
+				// Line-through steps
+				$("#dfrps_step_title").addClass( "dfrps_dashboard_step_completed" );
+			}, 3000);
+		});
+
 		/**
 		 * Load search results.
 		 */

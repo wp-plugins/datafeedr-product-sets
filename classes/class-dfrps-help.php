@@ -48,9 +48,9 @@ class Dfrps_Admin_Help {
 					'<h2>' . __( "What is a Product Set?", DFRPS_DOMAIN ) . '</h2>' . 
 					'<p>' . __( "A Product Set contains a collection of related products and is responsible for importing those products into your blog and keeping them up-to-date.", DFRPS_DOMAIN ) . '</p>' .
 					'<ul>' . 
-						'<li><strong>' . __( "Collection of Products", DFRPS_DOMAIN ) . '</strong> - ' . __( "You have the option of adding products to your Product Set in one of two ways: by saving a search, or by adding a single product individually.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Importing Products", DFRPS_DOMAIN ) . '</strong> - ' . __( "After you publish your Product Set, the products will be imported into your blog when they reach the front of the update queue.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Updating Products", DFRPS_DOMAIN ) . '</strong> - ' . __( "The Product Set is also responsible for keeping its imported products up-to-date. The update interval is configured on the Product Sets > Configuration page.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Adding products", DFRPS_DOMAIN ) . '</strong> - ' . __( "Build your Product Set in one of two ways: By saving a search you can add all the products in your search results to your Product Set at once. By adding a single product individually you can handpick items to add to your set. You can use one or both methods of adding products when building a Product Set.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Importing products", DFRPS_DOMAIN ) . '</strong> - ' . __( "When you publish your Product Set, it enters the update queue. The products will be imported into your blog when the Product Set reaches its turn in the queue.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Updating products", DFRPS_DOMAIN ) . '</strong> - ' . __( "The Product Set is also responsible for keeping its imported products up-to-date. The update interval is configured on the Product Sets > Configuration page.", DFRPS_DOMAIN ) . '</li>' .
 					'</ul>' . 
 					'<p>' . __( "", DFRPS_DOMAIN ) . '</p>' 
 			) );
@@ -61,7 +61,7 @@ class Dfrps_Admin_Help {
 				'content'	=> 
 					'<h2>' . __( "Dashboard", DFRPS_DOMAIN ) . '</h2>' . 
 					'<p>' . __( 'The Dashboard guides you through the process of creating a new Product Set. It gives you an overview of the Product Set\'s status, informs you about the update status after you publish, and provides quick links to perform additional actions.', DFRPS_DOMAIN ) . '</p>' . 
-					'<p>' . __( "By default it can be found at the top of the right column.", DFRPS_DOMAIN ) . '</p>' 
+					'<p>' . __( "By default, the Dashboard can be found at the top of the right column.", DFRPS_DOMAIN ) . '</p>' 
 				) );
 		
 			$screen->add_help_tab( array(
@@ -77,7 +77,7 @@ class Dfrps_Admin_Help {
 				'title'		=> __( 'Search tab', DFRPS_DOMAIN ),
 				'content'	=> 
 					'<h2>' . __( "Search Tab", DFRPS_DOMAIN ) . '</h2>' . 
-					'<p>' . __( 'Start your product search on the Search tab. On the search form, click <strong>+ add filter</strong> to add additional search fields or (-) to remove fields. Fill your search parameters, then click [Search]. After your results are returned, you\'ll have the option to save your search or add individual products to your Product Set.', DFRPS_DOMAIN ) . '</p>'
+					'<p>' . __( 'Start your search on the Search tab. Click <strong>+ add filter</strong> to add additional search fields or <img src="' . DFRAPI_URL . 'images/icons/removefilter.png" class="dfrps_valign_middle" /> to remove fields. Fill your search parameters, then click <strong>[Search]</strong>. You\'ll be able to save your search and add individual products to your Product Set.', DFRPS_DOMAIN ) . '</p>'
 			) );
 		
 			$screen->add_help_tab( array(
@@ -85,8 +85,8 @@ class Dfrps_Admin_Help {
 				'title'		=> __( 'Saved Search tab', DFRPS_DOMAIN ),
 				'content'	=> 
 					'<h2>' . __( "Saved Search Tab", DFRPS_DOMAIN ) . '</h2>' . 
-					'<p>' . __( 'When/After you save a search, the results will appear on the Saved Search tab. You can also delete your saved search on this tab.', DFRPS_DOMAIN ) . '</p>' . 
-					'<p>' . __( 'The number on the Saved Search tab indicates the number of products in your saved search results, not the total number of products in your Product Set.', DFRPS_DOMAIN ) . '</p>'
+					'<p>' . __( 'After you save a search, the results will appear on the Saved Search tab. You can also delete your saved search on this tab.', DFRPS_DOMAIN ) . '</p>' . 
+					'<p>' . __( 'The number on the Saved Search tab indicates the products in your saved search results, not the total number of products in your Product Set. You can delete your saved search on this tab.', DFRPS_DOMAIN ) . '</p>'
 			) );
 		
 			$screen->add_help_tab( array(
@@ -94,7 +94,7 @@ class Dfrps_Admin_Help {
 				'title'		=> __( 'Single Products tab', DFRPS_DOMAIN ),
 				'content'	=> 
 					'<h2>' . __( "Single Products Tab", DFRPS_DOMAIN ) . '</h2>' . 
-					'<p>' . __( 'When you add individual products to your product set using the ', DFRPS_DOMAIN ) . '<img src="' . DFRPS_URL . 'images/icons/plus.png" class="dfrps_valign_middle" />' . __( ' button, those products will be listed on the Single Products tab. You can also remove these products from your Product Set by clicking the ', DFRPS_DOMAIN ) . '<img src="' . DFRPS_URL . 'images/icons/minus.png" class="dfrps_valign_middle" />' . __( ' button next to the item on the Single Products tab.', DFRPS_DOMAIN ) . '</p>'
+					'<p>' . __( 'The Single Product tab lists all the products that you add to your Product Set one by one, using the <img src="' . DFRPS_URL . 'images/icons/plus.png" class="dfrps_valign_middle" /> button. The number on the tab shows how many products single products you’ve added, not the total number of products in your Product Set. To remove individually-added products from your Product Set, click the <img src="' . DFRPS_URL . 'images/icons/minus.png" class="dfrps_valign_middle" /> icon next to the item on the Single Product tab.', DFRPS_DOMAIN ) . '</p>' 
 			) );
 		
 			$screen->add_help_tab( array(
@@ -102,7 +102,7 @@ class Dfrps_Admin_Help {
 				'title'		=> __( 'Blocked Products tab', DFRPS_DOMAIN ),
 				'content'	=> 
 					'<h2>' . __( "Blocked Products Tab", DFRPS_DOMAIN ) . '</h2>' . 
-					'<p>' . __( 'Products that you no longer wish to see in your Product Set or search results can be blocked by clicking the ', DFRPS_DOMAIN ) . '<img src="' . DFRPS_URL . 'images/icons/block.png" class="dfrps_valign_middle" />' . __( ' button. All the products you\'ve blocked from a Product Set will be listed on the Blocked Products tab. You can unblock products on this list by clicking ', DFRPS_DOMAIN ) . '<img src="' . DFRPS_URL . 'images/icons/unblock.png" class="dfrps_valign_middle" />.</p>'
+					'<p>' . __( 'Remove products from your search results and Product Set by clicking the <img src="' . DFRPS_URL . 'images/icons/block.png" class="dfrps_valign_middle" /> button. All the products you\'ve blocked will be listed on the Blocked Products tab. To unblock products on this list, click <img src="' . DFRPS_URL . 'images/icons/unblock.png" class="dfrps_valign_middle" />.', DFRPS_DOMAIN ) . '</p>'
 			) );
 		
 			$screen->add_help_tab( array(
@@ -113,11 +113,12 @@ class Dfrps_Admin_Help {
 					'<p>' . __( 'How to understand the hidden and displayed information in a product record:', DFRPS_DOMAIN ) . '</p>' . 
 					'<p><img src="' . DFRPS_URL . 'images/icons/productrecord.png" /></p>' . 
 					'<h2>' . __( "Action Links Legend", DFRPS_DOMAIN ) . '</h2>
-					<p><img src="' . DFRPS_URL . 'images/icons/plus.png" class="dfrps_valign_middle" /> ' . __( 'Click to add product to Product Set individually (ie. to Single Products list).', DFRPS_DOMAIN ) . '</p>
-					<p><img src="' . DFRPS_URL . 'images/icons/block.png" class="dfrps_valign_middle" /> ' . __( 'Click to block product from Product Set and searches.', DFRPS_DOMAIN ) . '</p>
+					<p><img src="' . DFRPS_URL . 'images/icons/plus.png" class="dfrps_valign_middle" /> ' . __( 'Click to add product to Product Set individually, as a Single Product.', DFRPS_DOMAIN ) . '</p>
+					<p><img src="' . DFRPS_URL . 'images/icons/checkmark.png" class="dfrps_valign_middle" /> ' . __( 'Indicates product was added to Product Set individually.', DFRPS_DOMAIN ) . '</p>
 					<p><img src="' . DFRPS_URL . 'images/icons/minus.png" class="dfrps_valign_middle" /> ' . __( 'Click to remove product from Single Products list.', DFRPS_DOMAIN ) . '</p>
-					<p><img src="' . DFRPS_URL . 'images/icons/unblock.png" class="dfrps_valign_middle" /> ' . __( 'Click to remove product from Blocked Products list', DFRPS_DOMAIN ) . '</p>
-					<p><img src="' . DFRPS_URL . 'images/icons/checkmark.png" class="dfrps_valign_middle" /> ' . __( 'Indicates product was added to Product Set individually.', DFRPS_DOMAIN ) . '</p>'
+					<p><img src="' . DFRPS_URL . 'images/icons/block.png" class="dfrps_valign_middle" /> ' . __( 'Click to block product from Product Set and searches.', DFRPS_DOMAIN ) . '</p>
+					<p><img src="' . DFRPS_URL . 'images/icons/unblock.png" class="dfrps_valign_middle" /> ' . __( 'Click to remove product from Blocked Products list.', DFRPS_DOMAIN ) . '</p>
+					'
 			) );
 
 		// This is the "List" of product sets page (All Product Sets)
@@ -130,24 +131,24 @@ class Dfrps_Admin_Help {
 					
 					'<h2>' . __( "Column Headers", DFRPS_DOMAIN ) . '</h2>' . 
 					
-					'<p>' . __( "Definitions of the column headers from the Product Sets table below:", DFRPS_DOMAIN ) . '</p>' . 
+					'<p>' . __( "Information displayed in the Product Sets table:", DFRPS_DOMAIN ) . '</p>' . 
 					'<ul>' . 
-						'<li><strong>' . __( "Title", DFRPS_DOMAIN ) . '</strong> - ' 			. __( "The title of your Product Set is optional, for your reference only, and not publicly viewable.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Created", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "The date/time the Product Set was published.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Modified", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "The date/time the Product Set was last modified.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Status", DFRPS_DOMAIN ) . '</strong> - ' 			. __( "The Product Set's publication status. Note that only \"Published\" or \"Scheduled\" Product Sets will be imported or updated.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Next Update", DFRPS_DOMAIN ) . '</strong> - ' 	. __( "The date/time this Product Set is scheduled to be updated.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Started", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "The date/time this Product Set's last update started.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Completed", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "The date/time this Product Set's last update completed.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Added", DFRPS_DOMAIN ) . '</strong> - ' 			. __( "The number of products added/updated during this Product Set's last update.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "Deleted", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "The number of products deleted during this Product Set's last update.", DFRPS_DOMAIN ) . '</li>' .
-						'<li><strong>' . __( "API Requests", DFRPS_DOMAIN ) . '</strong> - ' 	. __( "The number of API requests required during this Product Set's last update.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Title", DFRPS_DOMAIN ) . '</strong> - ' 			. __( "Product Set title is optional, for your reference only, and not publicly viewable.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Created", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "Date/time the set was published.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Modified", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "Date/time the set was last modified, ex. title changed.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Status", DFRPS_DOMAIN ) . '</strong> - ' 			. __( "Publication status can be: Published; Draft; Pending; or Trash. Only \"Published\" or \"Scheduled\" Product Sets will be imported or updated.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Next Update", DFRPS_DOMAIN ) . '</strong> - ' 	. __( "Date/time the set is scheduled to be updated.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Started", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "Date/time the set’s last update started.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Completed", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "Date/time the set’s last update completed.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Added", DFRPS_DOMAIN ) . '</strong> - ' 			. __( "The number of products added or updated during the last update.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "Deleted", DFRPS_DOMAIN ) . '</strong> - ' 		. __( "The number of products deleted during the last update.", DFRPS_DOMAIN ) . '</li>' .
+						'<li><strong>' . __( "API Requests", DFRPS_DOMAIN ) . '</strong> - ' 	. __( "The number of <a href=\"https://v4.datafeedr.com/node/373\" target=\"_blank\">API requests</a> required during the last update.", DFRPS_DOMAIN ) . '</li>' .
 					'</ul>' . 
-					'<p>' . __( "To hide a column:", DFRPS_DOMAIN ) . '</p>' . 
+					'<p>' . __( "<strong>TIP!</strong> To hide a column:", DFRPS_DOMAIN ) . '</p>' . 
 					'<ol>' . 
 						'<li>' . __( 'Close this Help box by clicking the "Help" tab label (lower right).', DFRPS_DOMAIN ) . '</li>' . 
 						'<li>' . __( 'Open the "Screen Options" tab.', DFRPS_DOMAIN ) . '</li>' . 
-						'<li>' . __( "Uncheck the headers you want to hide.", DFRPS_DOMAIN ) . '</li>' . 
+						'<li>' . __( "Deselect the headers you want to hide.", DFRPS_DOMAIN ) . '</li>' . 
 					'</ol>'
 			) );
 		
@@ -159,8 +160,8 @@ class Dfrps_Admin_Help {
 				'title'		=> __( 'Search Settings', DFRPS_DOMAIN ),
 				'content'	=> 
 					'<h2>' . __( "Search Settings", DFRPS_DOMAIN ) . '</h2>' . 
-					'<p><strong>' . __( 'Products Per Search', DFRPS_DOMAIN ) . '</strong> - ' . 
-					__( "This sets the number of products per page of search results to display in the admin area of your site. This setting does not affect how many products display to visitors on the front end of your site.", DFRPS_DOMAIN ) . '</p>' .
+					'<p><strong>' . __( 'Products per Search', DFRPS_DOMAIN ) . '</strong> - ' . 
+					__( "This sets how many products display per page of search results in the admin area of your site. This setting does not affect how many products display to visitors on the front end of your site.", DFRPS_DOMAIN ) . '</p>' .
 					'<p><strong>' . __( 'Default Search Setting', DFRPS_DOMAIN ) . '</strong> - ' . 
 					__( "This setting configures how the product search form loads when creating a new Product Set. Changing the default settings will not affect already created Product Sets.", DFRPS_DOMAIN ) . '</p>'
 			) );
@@ -189,16 +190,16 @@ class Dfrps_Admin_Help {
 					
 					'<h2>' . __( "Advanced Update Settings", DFRPS_DOMAIN ) . '</h2>' . 
 					
-					'<p><strong class="dfrps_warning">' . __( 'WARNING', DFRPS_DOMAIN ) . '</strong> - ' . __( "Updates are <strong>SERVER INTENSIVE</strong>. Modifying these values could cause server or hosting issues. Change with caution!", DFRPS_DOMAIN ) . '</p>' .
+					'<p class="dfrps_warning"><strong>' . __( 'WARNING', DFRPS_DOMAIN ) . '</strong> - ' . __( "Updates are <strong>SERVER INTENSIVE</strong>. Modifying these values could cause server or hosting issues. Change with caution!", DFRPS_DOMAIN ) . '</p>' .
 					
 					'<p><strong>' . __( 'Update Interval', DFRPS_DOMAIN ) . '</strong> - ' . 
-					__( "This setting determines how often a Product Set is updated.", DFRPS_DOMAIN ) . '</p>' .
+					__( "This setting determines how often products in a Product Set should be updated.", DFRPS_DOMAIN ) . '</p>' .
 					
 					'<p><strong>' . __( 'Cron Interval', DFRPS_DOMAIN ) . '</strong> - ' . 
-					__( "This setting controls how often WordPress Cron will run to check if a Product Set needs to be updated or to perform the next step in the update process if a Product Set is currently being updated.", DFRPS_DOMAIN ) . '</p>' .
+					__( "This setting controls how often WordPress Cron will run: 1) to check if a Product Set needs to be updated, or 2) to perform the next step in the update process if a Product Set is currently being updated.", DFRPS_DOMAIN ) . '</p>' .
 					
-					'<p><strong>' . __( 'Products Per Update', DFRPS_DOMAIN ) . '</strong> - ' . 
-					__( "This setting controls the number of products per batch to update.", DFRPS_DOMAIN ) . '</p>' .
+					'<p><strong>' . __( 'Products per Update', DFRPS_DOMAIN ) . '</strong> - ' . 
+					__( "This setting controls how many products per batch will update.", DFRPS_DOMAIN ) . '</p>' .
 					
 					'<p><strong>' . __( 'Preprocess Maximum', DFRPS_DOMAIN ) . '</strong> - ' . 
 					__( "This sets the number of products per batch to prepare for updating. Preprocessing includes flagging all products in a Product Set as being ready for updating and modifying those products' categories.", DFRPS_DOMAIN ) . '</p>' .

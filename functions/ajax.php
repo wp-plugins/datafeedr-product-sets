@@ -226,7 +226,7 @@ function dfrps_ajax_dashboard() {
 		$html .= '<li id="dfrps_step_search" class="' . $temp_class . '">' . __( 'Search for products.', DFRPS_DOMAIN ) . '</li>';
 		$html .= '<li id="dfrps_step_save" class="' . $saved_class . '">' . __( ' Click <strong>[Add as Saved Search]</strong> when you\'re happy with search results.', DFRPS_DOMAIN ) . '</li>';
 		$html .= '<li id="dfrps_step_category" class="' . $cats_class . '">' . __( 'Select a category to import into.', DFRPS_DOMAIN ) . '</li>';
-		$html .= '<li id="dfrps_step_publish">' . __( 'Click the [Publish] button to import these products into your site.', DFRPS_DOMAIN ) . '</li>';
+		$html .= '<li id="dfrps_step_publish">' . __( 'Click the <strong>[Publish]</strong> button to import these products into your site.', DFRPS_DOMAIN ) . '</li>';
 		$html .= '</ol>';
 	}
 	

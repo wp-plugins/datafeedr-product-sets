@@ -44,7 +44,7 @@ function dfrps_pagination( $data, $context ) {
 	$offset 		= $data['offset'];
 	$found_count 	= $data['found_count'];
 	$query 			= ( isset( $data['query'] ) ) ? $data['query'] : array();
-	$hard_limit 	= dfrapi_get_query_param( $data['query'], 'limit' );
+	$hard_limit 	= dfrapi_get_query_param( $query, 'limit' );
 
 	// Limit Found Count to hard limit if hard limit exists.
 	if ( $hard_limit ) {

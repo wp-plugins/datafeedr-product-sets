@@ -599,7 +599,7 @@ font-size: 90%;
 	margin-top: 10px;
 }
 
-#div_dfrps_tab_search #dfrapi_search_form { margin-left: 10px; }
+#div_dfrps_tab_search #dfrapi_search_form { margin-left: 0px; }
 
 
 
@@ -649,7 +649,14 @@ font-size: 90%;
 				margin-top: 0;
 			}
 
-#dfrps_search_form_wrapper td.form { background-color: #FFF; padding-bottom: 10px; }
+#dfrps_search_form_wrapper td.form
+{
+	background-color: #FFF;
+	padding-bottom: 10px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
 #dfrps_search_form_wrapper .instructions
 {
 	padding: 0;

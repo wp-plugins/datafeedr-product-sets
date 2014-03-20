@@ -2,7 +2,7 @@
 
 Contributors: datafeedr.com
 Tags: datafeedr, product sets, dfrapi, dfrps, import, products
-Requires at least: 3.9-beta1
+Requires at least: 3.9-beta2
 Tested up to: 3.8.1
 Stable tag: 1.0.3
 License: GPLv2 or later
@@ -77,6 +77,12 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.0.4 =
+* Changes to a lot of help text on all pages.
+* Readded Javascript regarding input#title which was accidentally removed in version 1.0.2.
+* Fixed undefined indexes.
+* Tweaked search form css.
 
 = 1.0.3 =
 * Fixed commit.
