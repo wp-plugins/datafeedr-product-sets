@@ -76,7 +76,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		function default_options() {
 			return array(
 				'update_interval' => 7,
-				'num_products_per_update' => 100,
+				'num_products_per_update' => 50,
 				'delete_missing_products' => 'yes',
 				'preprocess_maximum' => 100,
 				'postprocess_maximum' => 100,

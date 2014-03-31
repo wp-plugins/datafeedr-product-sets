@@ -33,6 +33,7 @@ class Dfrps_Admin_Help {
 			DFRPS_CPT,
 			'edit-' . DFRPS_CPT,
 			'product-sets_page_dfrps_configuration',
+			'product-sets_page_dfrps_tools',
 			'product-sets_page_dfrpswc_options',
 		);
 
@@ -208,7 +209,30 @@ class Dfrps_Admin_Help {
 					__( "This sets the number of products to process per batch upon completion of a Product Set update. Postprocessing includes deleting any old or missing products.", DFRPS_DOMAIN ) . '</p>'
 
 			) );
-		}	
+		
+		// This is the Tools page.
+		} elseif ( $screen->id == 'product-sets_page_dfrps_tools' ) {
+
+			$screen->add_help_tab( array(
+				'id'		=> 'dfrps_tools',
+				'title'		=> __( 'Tools', DFRPS_DOMAIN ),
+				'content'	=> 
+					'<h2>' . __( "Datafeedr Product Sets Tools", DFRPS_DOMAIN ) . '</h2>' . 
+					
+					'<p><strong>' . __( 'Test HTTP Loopback', DFRPS_DOMAIN ) . '</strong> - ' . 
+					__( "Use this tool to determine if your web host has disabled the WordPress Cron functionality.", DFRPS_DOMAIN ) . '</p>' .
+					
+					'<p><strong>' . __( 'Reset Cron', DFRPS_DOMAIN ) . '</strong> - ' . 
+					__( "Use this tool to reset your Datafeedr Product Sets import/update cron schedule.", DFRPS_DOMAIN ) . '</p>' . 
+					
+					'<p><strong>' . __( 'Fix Missing Images', DFRPS_DOMAIN ) . '</strong> - ' . 
+					__( "Use this tool to import any product images that were not properly imported previously.", DFRPS_DOMAIN ) . '</p>' . 
+					
+					'<p><strong>' . __( 'Bulk Image Import', DFRPS_DOMAIN ) . '</strong> - ' . 
+					__( "Use this tool to immediately begin importing product images.", DFRPS_DOMAIN ) . '</p>'
+			) );
+		
+		}
 
 		// The following tabs appear on ALL screens.		
 		dfrapi_help_tab( $screen );
