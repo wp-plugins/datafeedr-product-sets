@@ -37,7 +37,7 @@ if ( !wp_next_scheduled( 'dfrps_cron' ) ) {
 }
 
 /**
- * Query Sets and run update is needed.
+ * Query product sets and run update if needed.
  */
 add_action( 'dfrps_cron', 'dfrps_get_product_set_to_update' );
 function dfrps_get_product_set_to_update() {

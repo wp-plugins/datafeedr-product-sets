@@ -78,6 +78,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 
 == Changelog ==
 
+= 1.0.7 =
+* Modified comment text.
+
 = 1.0.6 =
 * Forgot to update version in main plugin file.
 
