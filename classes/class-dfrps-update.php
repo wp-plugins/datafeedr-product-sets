@@ -686,7 +686,7 @@ class Dfrps_Update {
 		$this->phase = 3;
 
 		do_action( 'dfrps_begin_phase', $this );
-		do_action( 'dfrps_begin_phase_2', $this );
+		do_action( 'dfrps_begin_phase_3', $this );
 		$this->count_iteration();
 			
 		// Get included IDs and remove any duplicates or empty values.
