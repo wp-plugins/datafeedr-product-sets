@@ -182,7 +182,7 @@ function dfrps_get_existing_post( $product, $set ) {
 		JOIN $wpdb->postmeta pm1
 			ON pm1.post_id = p.ID
 		WHERE pm1.meta_key = '_dfrps_product_id' 
-		AND pm1.meta_value = %d
+		AND pm1.meta_value = %s
 		AND p.post_type IN ( '" . $import_into . "' )
 	", $product['_id'] ), ARRAY_A );
 	
