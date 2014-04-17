@@ -564,7 +564,12 @@ function dfrps_ajax_get_products() {
 		}
 		
 		// Isolate the query
-		parse_str( $_REQUEST['query'], $query );
+		if ( isset ( $_REQUEST['query'] ) ) {
+			parse_str( $_REQUEST['query'], $query );
+		} else {
+			$query = array();
+			$query['_dfrps_cpt_query'] = array();
+		}
 		
 		// If query is not empty, store it as the temp query.
 		if ( !empty( $query['_dfrps_cpt_query'] ) ) {

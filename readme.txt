@@ -2,11 +2,11 @@
 
 Contributors: datafeedr.com
 Tags: datafeedr, product sets, dfrapi, dfrps, import, products
-Requires at least: 3.8
-Tested up to: 3.9
-Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Requires at least: 3.8
+Tested up to: 4.0-alpha
+Stable tag: 1.0.8
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.0.9 =
+* Set update_phase to 0 when Product Set is moved to Trash. (#8705)
+* Fixed undefined indexes.
 
 = 1.0.8 =
 * Updated 'tested up to' tag.

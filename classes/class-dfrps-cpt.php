@@ -618,10 +618,19 @@ class Dfrps_Cpt {
 	/**
 	 * Set the next update time to 5 minutes in the future so a user has time Restore
 	 * this product set from the Trash.
+	 * 
+	 * Also, reset update phase back to 0. This prevents the set from being ignored if
+	 * the phase is greater than 2, as the delete function only has 2 phases. (#8705)
+	 * 
+	 * Also, delete first_pass information.
 	 */
 	function wp_trash_product_set( $post_id ) {
 		$this->trashed_set_id = $post_id;
 		update_post_meta( $post_id, '_dfrps_cpt_next_update_time', ( date_i18n( 'U' ) + 300 ) );
+		update_post_meta( $post_id, '_dfrps_cpt_update_phase', 0 );
+		for( $i=1; $i<=5; $i++ ) {
+			delete_post_meta( $post_id, '_dfrps_cpt_update_phase' . $i . '_first_pass' );
+		}
 	}
 	
 	/**
