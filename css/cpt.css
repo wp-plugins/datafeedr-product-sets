@@ -154,7 +154,13 @@
 	border: 0;
 }
 
-
+.dfrps_searching_x_products
+{
+	text-align: center;
+	font-size: 150%;
+	margin-top: 20px;
+	color: #A1A1A0;
+}
 
 /***************************************************************
 // Add/Edit Product Set Page

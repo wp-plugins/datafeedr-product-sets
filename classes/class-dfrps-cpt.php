@@ -627,10 +627,7 @@ class Dfrps_Cpt {
 	function wp_trash_product_set( $post_id ) {
 		$this->trashed_set_id = $post_id;
 		update_post_meta( $post_id, '_dfrps_cpt_next_update_time', ( date_i18n( 'U' ) + 300 ) );
-		update_post_meta( $post_id, '_dfrps_cpt_update_phase', 0 );
-		for( $i=1; $i<=5; $i++ ) {
-			delete_post_meta( $post_id, '_dfrps_cpt_update_phase' . $i . '_first_pass' );
-		}
+		dfrps_reset_product_set_update( $post_id );
 	}
 	
 	/**

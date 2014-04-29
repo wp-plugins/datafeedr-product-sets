@@ -185,12 +185,12 @@ function dfrps_ajax_dashboard() {
 	$temp_query 		= isset( $meta['_dfrps_cpt_temp_query'][0] ) ? $meta['_dfrps_cpt_temp_query'][0] : false;
 	$saved_query 		= isset( $meta['_dfrps_cpt_query'][0] ) ? $meta['_dfrps_cpt_query'][0] : false;
 	$categories 		= isset( $meta['_dfrps_cpt_categories'][0] ) ? unserialize( $meta['_dfrps_cpt_categories'][0] ) : false; // a:1:{s:7:"product";a:0:{}}
+	$links				= array();
 		
 	$cats_query = false;
 	if ( is_array( $categories ) ) {
 		$cpts = array_keys( $categories );
 		if ( !empty( $cpts ) ) {
-			$links = array();
 			$registered_cpts = get_option( 'dfrps_registered_cpts', array() );
 			foreach ( $cpts as $cpt ) {
 				$term_ids = $categories[$cpt];
@@ -620,10 +620,6 @@ function dfrps_ajax_get_products() {
 
 	// Context is "div_dfrps_tab_saved_search"
 	if ( $context == 'div_dfrps_tab_saved_search' ) {
-		
-		// Isolate the query
-		// @TODO - remove this line as I don't think it's needed anymore.
-		// parse_str( $_REQUEST['query'], $query );
 		
 		// Get query
 		$saved_query = get_post_meta( $postid, '_dfrps_cpt_query', true ); 

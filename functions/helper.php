@@ -270,7 +270,7 @@ function dfrps_percent_complete( $set_id ) {
 	
 	if ( $last_update['_dfrps_cpt_last_update_time_completed'][0] == 0 ) {
 		// There is no last update info (no iterations). Return percentage based on update phase.
-		$percent = round( ( $update_phase / 4 ) * 100 );
+		$percent = round( ( $update_phase / 5 ) * 100 );
 		return $percent;
 	}
 	
@@ -452,4 +452,15 @@ function dfrps_default_cpt_is_selected() {
 
 function dfrps_set_html_content_type() {
 	return 'text/html';
+}
+
+function dfrps_reset_product_set_update( $set_id ) {
+	
+	// Update phase/added/deleted.
+	update_post_meta( $set_id, '_dfrps_cpt_update_phase', 0 );
+	
+	// Delete first passes.
+	for( $i=1; $i<=10; $i++ ) {
+		delete_post_meta( $set_id, '_dfrps_cpt_update_phase' . $i . '_first_pass' );
+	}
 }

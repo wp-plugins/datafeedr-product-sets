@@ -76,7 +76,8 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		function default_options() {
 			return array(
 				'update_interval' => 7,
-				'num_products_per_update' => 50,
+				'num_products_per_update' => 100,
+				'num_products_per_api_request' => 100,
 				'delete_missing_products' => 'yes',
 				'preprocess_maximum' => 100,
 				'postprocess_maximum' => 100,
@@ -112,6 +113,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 			add_settings_field( 'update_interval', __( 'Update Interval', DFRPS_DOMAIN ), array( &$this, 'field_update_interval' ), $this->page, 'advanced-update' );
 			add_settings_field( 'cron_interval', __( 'Cron Interval', DFRPS_DOMAIN ), array( &$this, 'field_cron_interval' ), $this->page, 'advanced-update' );
 			add_settings_field( 'num_products_per_update', __( 'Products per Update', DFRPS_DOMAIN ), array( &$this, 'field_num_products_per_update' ), $this->page, 'advanced-update' );
+			add_settings_field( 'num_products_per_api_request', __( 'Products per API Request', DFRPS_DOMAIN ), array( &$this, 'field_num_products_per_api_request' ), $this->page, 'advanced-update' );
 			add_settings_field( 'preprocess_maximum', __( 'Preprocess Maximum', DFRPS_DOMAIN ), array( &$this, 'field_preprocess_maximum' ), $this->page, 'advanced-update' );
 			add_settings_field( 'postprocess_maximum', __( 'Postprocess Maximum', DFRPS_DOMAIN ), array( &$this, 'field_postprocess_maximum' ), $this->page, 'advanced-update' );
 		}
@@ -257,8 +259,29 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 				<option value="50" <?php selected( $this->options['num_products_per_update'], '50', true ); ?>><?php _e( '50', DFRPS_DOMAIN ); ?></option>
 				<option value="75" <?php selected( $this->options['num_products_per_update'], '75', true ); ?>><?php _e( '75', DFRPS_DOMAIN ); ?></option>
 				<option value="100" <?php selected( $this->options['num_products_per_update'], '100', true ); ?>><?php _e( '100', DFRPS_DOMAIN ); ?></option>
+				<option value="150" <?php selected( $this->options['num_products_per_update'], '150', true ); ?>><?php _e( '150', DFRPS_DOMAIN ); ?></option>
+				<option value="200" <?php selected( $this->options['num_products_per_update'], '200', true ); ?>><?php _e( '200', DFRPS_DOMAIN ); ?></option>
+				<option value="250" <?php selected( $this->options['num_products_per_update'], '250', true ); ?>><?php _e( '250', DFRPS_DOMAIN ); ?></option>
+				<option value="300" <?php selected( $this->options['num_products_per_update'], '300', true ); ?>><?php _e( '300', DFRPS_DOMAIN ); ?></option>
+				<option value="350" <?php selected( $this->options['num_products_per_update'], '350', true ); ?>><?php _e( '350', DFRPS_DOMAIN ); ?></option>
+				<option value="400" <?php selected( $this->options['num_products_per_update'], '400', true ); ?>><?php _e( '400', DFRPS_DOMAIN ); ?></option>
+				<option value="450" <?php selected( $this->options['num_products_per_update'], '450', true ); ?>><?php _e( '450', DFRPS_DOMAIN ); ?></option>
+				<option value="500" <?php selected( $this->options['num_products_per_update'], '500', true ); ?>><?php _e( '500', DFRPS_DOMAIN ); ?></option>
 			</select>
-			<p class="description"><?php _e( 'The number of products per batch to update.<br />This process is server intensive. Reduce this number if you are experiencing server load or timeout issues.', DFRPS_DOMAIN ); ?></p>
+			<p class="description"><?php _e( 'The number of products per batch to import into your store.<br />This process is server intensive. Reduce this number if you are experiencing server load or timeout issues.', DFRPS_DOMAIN ); ?></p>
+			<?php		
+		}
+				
+		function field_num_products_per_api_request() {
+			?>
+			<select id="num_products_per_api_request" name="<?php echo $this->key; ?>[num_products_per_api_request]">
+				<option value="10" <?php selected( $this->options['num_products_per_api_request'], '10', true ); ?>><?php _e( '10', DFRPS_DOMAIN ); ?></option>
+				<option value="25" <?php selected( $this->options['num_products_per_api_request'], '25', true ); ?>><?php _e( '25', DFRPS_DOMAIN ); ?></option>
+				<option value="50" <?php selected( $this->options['num_products_per_api_request'], '50', true ); ?>><?php _e( '50', DFRPS_DOMAIN ); ?></option>
+				<option value="75" <?php selected( $this->options['num_products_per_api_request'], '75', true ); ?>><?php _e( '75', DFRPS_DOMAIN ); ?></option>
+				<option value="100" <?php selected( $this->options['num_products_per_api_request'], '100', true ); ?>><?php _e( '100', DFRPS_DOMAIN ); ?></option>
+			</select>
+			<p class="description"><?php _e( 'The maximum number of products the API should return per API request.<br />This process is server intensive. Reduce this number if you are experiencing server load or timeout issues.', DFRPS_DOMAIN ); ?></p>
 			<?php		
 		}
 		
@@ -318,13 +341,23 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 					}
 				}	
 			
-				// Validate "num_products_per_update"
+				// Validate "num_products_per_update" (500 max)
 				if ( $key == 'num_products_per_update' ) {
 					$value = intval( $value );
-					if ( $value < 10 || $value > 100 ) {
+					if ( $value < 10 || $value > 500 ) {
 						$new_input['num_products_per_update'] = 100;
 					} else {
 						$new_input['num_products_per_update'] = $value;
+					}
+				}
+			
+				// Validate "num_products_per_api_request" (100 max)
+				if ( $key == 'num_products_per_api_request' ) {
+					$value = intval( $value );
+					if ( $value < 10 || $value > 100 ) {
+						$new_input['num_products_per_api_request'] = 100;
+					} else {
+						$new_input['num_products_per_api_request'] = $value;
 					}
 				}
 			

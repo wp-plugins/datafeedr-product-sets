@@ -42,6 +42,12 @@ if ( !wp_next_scheduled( 'dfrps_cron' ) ) {
 add_action( 'dfrps_cron', 'dfrps_get_product_set_to_update' );
 function dfrps_get_product_set_to_update() {
 
+	// Check if an update is already running.
+	$doing_update = get_transient( 'dfrps_doing_update' );
+	if ( $doing_update !== false ) {
+		return;		
+	}
+
 	// Check that updates are enabled.
 	$options = get_option( 'dfrps_configuration', array() );
 	if ( $options['updates_enabled'] == 'disabled' ) {

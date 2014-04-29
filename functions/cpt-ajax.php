@@ -238,7 +238,7 @@ $nonce = wp_create_nonce( 'dfrps_ajax_nonce' );
 			$("#dfrps_cpt_search").addClass("button-disabled").val("<?php echo dfrps_helper_js_text('searching'); ?>");
 
 			// Display "loading..." image.				
-			$("#div_dfrps_tab_search_results").html('<div class="dfrps_loading"></div>');
+			$("#div_dfrps_tab_search_results").html('<div class="dfrps_loading"></div><div class="dfrps_searching_x_products">Searching <?php echo dfrapi_get_total_products_in_db(TRUE, ''); ?> products...</div>');
 
 			$.ajax({
 				type: "POST",

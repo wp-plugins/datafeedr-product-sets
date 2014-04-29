@@ -202,6 +202,9 @@ class Dfrps_Admin_Help {
 					'<p><strong>' . __( 'Products per Update', DFRPS_DOMAIN ) . '</strong> - ' . 
 					__( "This setting controls how many products per batch will update.", DFRPS_DOMAIN ) . '</p>' .
 					
+					'<p><strong>' . __( 'Products per API Request', DFRPS_DOMAIN ) . '</strong> - ' . 
+					__( "This setting controls the maximum number of products returned per API request.", DFRPS_DOMAIN ) . '</p>' .
+					
 					'<p><strong>' . __( 'Preprocess Maximum', DFRPS_DOMAIN ) . '</strong> - ' . 
 					__( "This sets the number of products per batch to prepare for updating. Preprocessing includes flagging all products in a Product Set as being ready for updating and modifying those products' categories.", DFRPS_DOMAIN ) . '</p>' .
 					
