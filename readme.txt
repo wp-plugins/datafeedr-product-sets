@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.0-alpha
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.1 =
+* Fixed issue with the sale price not displaying on 'single products' tab after set has updated. (#9210)
 
 = 1.1.0 =
 * Modified the 'Updater' class. Products are now inserted into a temporary table directly from the API query. Then the updater iterates over the temporary table until all products are processed and imported into WP. This change will make the update process slightly longer however it will prevent wasted API requests. It will also work to prevent import timeouts by separating the API Request and the Import into 2 different stages.
