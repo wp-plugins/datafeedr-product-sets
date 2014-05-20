@@ -53,4 +53,4 @@ if ( !$previous_version ) {
  * 
  * Now that any upgrade functions are performed, update version in database.
  */
-add_option( 'dfrps_version', DFRPS_VERSION );
+update_option( 'dfrps_version', DFRPS_VERSION );

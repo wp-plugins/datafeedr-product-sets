@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.0-alpha
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.2 =
+* Changed add_option to update_option in upgrade.php file.
+* Added a new action to image.php file: "dfrps_invalid_image"
 
 = 1.1.1 =
 * Fixed issue with the sale price not displaying on 'single products' tab after set has updated. (#9210)

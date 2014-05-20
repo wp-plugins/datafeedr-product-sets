@@ -41,7 +41,7 @@ function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
 		$image = $postmeta[$field][0];
 	}
 		
-	if ($image) {
+	if ( $image ) {
 	
 		$product_image = array(
 			'post_title'   => preg_replace( '/\.[^.]+$/', '', $post->post_title ),
@@ -55,6 +55,11 @@ function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
 		if ( is_integer( $attachment ) ) {
 			set_post_thumbnail( $post->ID, $attachment );	
 		}	
+		
+	} else {
+	
+		// Do action if image is not a valid image.
+		do_action( 'dfrps_invalid_image', $post );
 	}
 	
    	update_post_meta( $post->ID, '_dfrps_product_check_image', 0 );	
