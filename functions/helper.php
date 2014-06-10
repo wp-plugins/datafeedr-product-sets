@@ -245,6 +245,11 @@ function dfrps_more_info_rows( $product ) {
 			<td class="value dfrps_force_wrap">
 				<a href="'.dfrapi_url( $product ).'" target="_blank" title="'.__('Open affiliate link in new window.', DFRPS_DOMAIN).'">'.esc_attr( dfrapi_url( $product ) ).'</a>
 			</td>';	
+		} elseif ( $k == 'ref_url' ) {
+			echo '
+			<td class="value dfrps_force_wrap">
+				<a href="'.dfrapi_url( $product ).'" target="_blank" title="'.__('Open affiliate link in new window.', DFRPS_DOMAIN).'">'.esc_attr( dfrapi_url( $product ) ).'</a>
+			</td>';	
 		} else {
 			echo '<td class="value dfrps_force_wrap">'.esc_attr( $v ).'</td>';		
 		}
