@@ -56,7 +56,7 @@ class Dfrps_Update {
 		CREATE TABLE IF NOT EXISTS $table 
 		(
 			product_id varchar(255) DEFAULT '' PRIMARY KEY,
-			data TEXT,
+			data LONGTEXT,
 			updated TIMESTAMP
 		) $charset_collate ";
 	   	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
