@@ -109,10 +109,12 @@ if ( !function_exists( 'dfrps_html_product_list' ) ) {
 									<span class="label"><?php echo $product['brand']; ?></span>
 								</div>
 							<?php endif; ?>
-							<div class="price" title="<?php echo __('Price', DFRPS_DOMAIN ) . ': ' . esc_attr( dfrapi_currency_code_to_sign( $currency ) . dfrapi_int_to_price( $product['price'] ) . ' ' . $currency ); ?>">
-								<span class="bullet">&bull;</span>
-								<span class="label"><?php echo dfrapi_currency_code_to_sign( $currency ); ?><?php echo dfrapi_int_to_price( $product['price'] ); ?></span>
-							</div>
+							<?php if ( isset( $product['price'] ) ) : ?>
+								<div class="price" title="<?php echo __('Price', DFRPS_DOMAIN ) . ': ' . esc_attr( dfrapi_currency_code_to_sign( $currency ) . dfrapi_int_to_price( $product['price'] ) . ' ' . $currency ); ?>">
+									<span class="bullet">&bull;</span>
+									<span class="label"><?php echo dfrapi_currency_code_to_sign( $currency ); ?><?php echo dfrapi_int_to_price( $product['price'] ); ?></span>
+								</div>
+							<?php endif; ?>
 							<?php if ( isset( $product['saleprice'] ) ) : ?>
 								<div class="saleprice" title="<?php echo __('Sale Price', DFRPS_DOMAIN ) . ': ' . esc_attr( dfrapi_currency_code_to_sign( $currency ) . dfrapi_int_to_price( $product['saleprice'] ) . ' ' . $currency ); ?>">
 									<span class="bullet">&bull;</span>
