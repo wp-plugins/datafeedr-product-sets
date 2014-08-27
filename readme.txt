@@ -80,6 +80,7 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 
 = 1.1.6 =
 * Added plugin icon for WordPress 4.0+.
+* Fixed dashed tab styling for product sets.
 
 = 1.1.5 =
 * Fixed undefined 'price' index in html.php file.

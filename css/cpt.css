@@ -193,6 +193,7 @@
 #dfrps_cpt_tabs .nav-tab.tab_disabled
 {
 	border-style: dashed;
+	border-width: 1px;
 	font-style: italic;
 	pointer-events: none;
 	cursor: default;
