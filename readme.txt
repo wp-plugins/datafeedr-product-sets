@@ -5,7 +5,7 @@ Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
-Tested up to: 4.0-beta1
+Tested up to: 4.0-RC1
 Stable tag: 1.1.5
 
 Build sets of products to import into your website.
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.6 =
+* Added plugin icon for WordPress 4.0+.
 
 = 1.1.5 =
 * Fixed undefined 'price' index in html.php file.
