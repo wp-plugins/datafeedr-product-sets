@@ -28,9 +28,8 @@ function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
 	}	
 		
 	// Don't do if this post already has a thumbnail
-	// if ( has_post_thumbnail( $post->ID ) ) {
-	// @LINK - http://codex.wordpress.org/Function_Reference/has_post_thumbnail
-	if ( get_the_post_thumbnail( $post->ID ) != '' ) { 
+	$thumbnail_id = get_post_thumbnail_id( $post->ID );
+	if ( !empty( $thumbnail_id ) ) { 
 		update_post_meta( $post->ID, '_dfrps_product_check_image', 0 );	
 		return $post;
 	}

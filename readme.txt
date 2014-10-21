@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.0
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.7 =
+* Replaced get_the_post_thumbnail() with get_post_thumbnail_id() in image processing script.
 
 = 1.1.6 =
 * Added plugin icon for WordPress 4.0+.
