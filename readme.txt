@@ -50,6 +50,7 @@ We currently have one importer which imports products from your Product Sets int
 * WordPress Cron enabled.
 * 64MB of memory ([instructions](http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP)).
 * PHP's `allow_url_fopen` must be `On`.
+* PHP's `CURL` support must be enabled.
 * An [importer plugin](http://wordpress.org/plugins/datafeedr-woocommerce-importer/) to handle importing products from your Product Sets into your website.
 
 == Installation ==
