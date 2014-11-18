@@ -184,7 +184,7 @@ function dfrps_ajax_dashboard() {
 	$last_update_time 	= $meta['_dfrps_cpt_last_update_time_completed'][0];
 	$temp_query 		= isset( $meta['_dfrps_cpt_temp_query'][0] ) ? $meta['_dfrps_cpt_temp_query'][0] : false;
 	$saved_query 		= isset( $meta['_dfrps_cpt_query'][0] ) ? $meta['_dfrps_cpt_query'][0] : false;
-	$categories 		= isset( $meta['_dfrps_cpt_categories'][0] ) ? unserialize( $meta['_dfrps_cpt_categories'][0] ) : false; // a:1:{s:7:"product";a:0:{}}
+	$categories 		= isset( $meta['_dfrps_cpt_categories'][0] ) ? maybe_unserialize( $meta['_dfrps_cpt_categories'][0] ) : false; // a:1:{s:7:"product";a:0:{}}
 	$links				= array();
 		
 	$cats_query = false;

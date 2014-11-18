@@ -39,7 +39,7 @@ class Dfrps_Update {
 
 	// Get CPTs that products can potentially be imported in to.
 	function get_cpts_to_import_into() {
-		$cpts = unserialize( @$this->meta['_dfrps_cpt_import_into'][0] );
+		$cpts = maybe_unserialize( @$this->meta['_dfrps_cpt_import_into'][0] );
 		if ( !empty( $cpts ) ) {
 			asort( $cpts );
 			return $cpts;
@@ -69,8 +69,8 @@ class Dfrps_Update {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dfrps_product_data';		
 		$data = array( 'product_id' => $product['_id'], 'data' => serialize( $product ) );
-		$wpdb->replace( $table, $data );
-	   	return TRUE;
+		$result = $wpdb->replace( $table, $data );
+	   	// return TRUE; Removed in v1.1.8
 	}
 	
 	// Get products from temp table to update.
@@ -340,7 +340,7 @@ class Dfrps_Update {
 
 		$this->count_iteration();
 		
-		$query = ( isset( $this->meta['_dfrps_cpt_query'][0] ) ) ? unserialize( $this->meta['_dfrps_cpt_query'][0] ) : array();
+		$query = ( isset( $this->meta['_dfrps_cpt_query'][0] ) ) ? maybe_unserialize( $this->meta['_dfrps_cpt_query'][0] ) : array();
 	
 		// Check that a saved search exists and move on if it doesn't.
 		if ( empty( $query ) ) {
@@ -407,7 +407,7 @@ class Dfrps_Update {
 		// Get included IDs and remove any duplicates or empty values.
 		$ids = get_post_meta( $this->set['ID'], '_dfrps_cpt_manually_added_ids', true );
 		$ids = array_filter( (array) $ids );
-		
+				
 		// If no IDs, update phase and go to Phase 3.
 		if ( empty( $ids ) ) {
 			return 'skip';
@@ -426,32 +426,29 @@ class Dfrps_Update {
 			$this->handle_error( $data );
 			return 'repeat';
 		}
-		
+				
 		// Delete any errors that are currently being stored.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', false );
 		
 		// If there are products, store product data in options table.		
 		if ( isset( $data['products'] ) && !empty( $data['products'] ) ) {
-		
 			foreach ( $data['products'] as $product ) {
 				$this->insert_temp_product( $product );
 			}
-			
-		} else {
-			
-			// No products, update "Phase".
-			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
-			return 'ready';
 		}
-
+				
 		// All products in this batch have been imported into the options table.  Now update some meta stuff.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', ( $this->meta['_dfrps_cpt_offset'][0] + 1 ) );
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_num_products_added', ( $this->meta['_dfrps_cpt_last_update_num_products_added'][0] + count( $data['products'] ) ) );	
 		
-		// If the number of products is less than the number of products per update 
-		// (that means subsequent queries wont return any more products).
-		// Move to next phase.
-		if ( ( count( $data['products'] ) < $this->config['num_products_per_api_request'] ) ) {
+		// If the number of product IDs is less than the number of products per update 
+		// (that means we've queried ALL product IDs).
+		// Move to next phase.		
+		$offset = ( $this->config['num_products_per_api_request'] * ( $this->meta['_dfrps_cpt_offset'][0] - 1 ) );
+		$length = $this->config['num_products_per_api_request'];
+		$current_range_of_ids = array_slice( $ids, $offset, $length );
+		
+		if ( ( count( $current_range_of_ids ) < $this->config['num_products_per_api_request'] ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
 			return 'ready';
 		}

@@ -267,7 +267,7 @@ function dfrps_percent_complete( $set_id ) {
 	$meta = get_post_custom( $set_id );
 	
 	$update_phase 	= intval( $meta['_dfrps_cpt_update_phase'][0] );
-	$last_update 	= unserialize( $meta['_dfrps_cpt_previous_update_info'][0] );
+	$last_update 	= maybe_unserialize( $meta['_dfrps_cpt_previous_update_info'][0] );
 	
 	if ( $update_phase < 1 ) {
 		return FALSE;

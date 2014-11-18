@@ -121,7 +121,7 @@ function dfrps_add_term( $taxonomy, $paths ) {
 function dfrps_remove_category_ids_from_post( $post_id, $set, $cpt, $taxonomy ) {
 	
 	// Get the category IDs associated with this Set.
-	$this_sets_categories = unserialize( $set['postmeta']['_dfrps_cpt_categories_history'][0] );
+	$this_sets_categories = maybe_unserialize( $set['postmeta']['_dfrps_cpt_categories_history'][0] );
 	$this_sets_categories =  $this_sets_categories[$cpt];
 	
 	if ( is_array( $this_sets_categories ) && !empty( $this_sets_categories ) ) {

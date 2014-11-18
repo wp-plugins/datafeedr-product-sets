@@ -37,7 +37,7 @@ class Dfrps_Delete {
 	
 	// Get CPTs that products can potentially be imported in to.
 	function get_cpts_to_import_into() {
-		$cpts = unserialize( @$this->meta['_dfrps_cpt_import_into'][0] );
+		$cpts = maybe_unserialize( @$this->meta['_dfrps_cpt_import_into'][0] );
 		if ( !empty( $cpts ) ) {
 			asort( $cpts );
 			return $cpts;

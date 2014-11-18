@@ -5,8 +5,8 @@ Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
-Tested up to: 4.0
-Stable tag: 1.1.7
+Tested up to: 4.1-beta1
+Stable tag: 1.1.8
 
 Build sets of products to import into your website.
 
@@ -78,6 +78,11 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.8 =
+* Changed most occurrences of unserialize() to maybe_unserialize() to deal with changes to get_metadata() in WP 4.1.0.
+* Removed 2nd argument from dfrps_upload_images() to deal with changes to deal with do_action_ref_array() introducing the $this parameter in 4.1.0.
+* Fixed bug where large Product Sets made up of lots of individually added products were not importing or updating all products in the Product Set. This only affected individually added products in Product Sets with over 100 products.
 
 = 1.1.7 =
 * Replaced get_the_post_thumbnail() with get_post_thumbnail_id() in image processing script.

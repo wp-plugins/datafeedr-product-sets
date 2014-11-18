@@ -2,8 +2,11 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-add_action( 'the_post', 'dfrps_upload_images', 10, 2 );
-function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
+add_action( 'the_post', 'dfrps_upload_images' );
+function dfrps_upload_images( $post ) {
+
+	// The postmeta field to find the image URL to use as the product's main featured image.
+	$field = '_dfrps_featured_image_url';
 	
 	// Don't process if this post_type is not even a registered CPT.
 	$registered_cpts = get_option( 'dfrps_registered_cpts', array() );
@@ -13,7 +16,7 @@ function dfrps_upload_images( $post, $field='_dfrps_featured_image_url' ) {
 	
 	// We need some postmeta so get that now.
 	$postmeta = get_post_custom( $post->ID );
-	
+		
 	// Apply filter to postmeta.
 	$postmeta = apply_filters( 'dfrps_upload_images_postmeta', $postmeta, $post );
 	

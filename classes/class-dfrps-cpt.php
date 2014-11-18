@@ -450,7 +450,7 @@ class Dfrps_Cpt {
 		$products_added 	= ( isset( $meta['_dfrps_cpt_last_update_num_products_added'][0] ) ) ? number_format( intval( $meta['_dfrps_cpt_last_update_num_products_added'][0] ) ) : 0;
 		$api_requests 		= ( isset( $meta['_dfrps_cpt_last_update_num_api_requests'][0] ) ) ? number_format( intval( $meta['_dfrps_cpt_last_update_num_api_requests'][0] ) ) : 0;
 		$products_deleted 	= ( isset( $meta['_dfrps_cpt_last_update_num_products_deleted'][0] ) ) ? number_format( intval( $meta['_dfrps_cpt_last_update_num_products_deleted'][0] ) ) : 0;
-		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : '';
+		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? maybe_unserialize( $meta['_dfrps_cpt_errors'][0] ) : '';
 		
 		switch ( $column ) {
 
@@ -813,13 +813,13 @@ class Dfrps_Cpt {
 		$post 				= $GLOBALS['post'];
 		$meta 				= get_post_custom( $post->ID );
 		$completed 			= $meta['_dfrps_cpt_last_update_time_completed'][0];
-		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? unserialize( $meta['_dfrps_cpt_errors'][0] ) : '';
+		$update_errors 		= ( isset( $meta['_dfrps_cpt_errors'][0] ) ) ? maybe_unserialize( $meta['_dfrps_cpt_errors'][0] ) : '';
 				
 		// Show last update stats
 		if ( $completed == 0 ) {
 			// Is updating now or has never updated.
 			// Show values from '_dfrps_cpt_previous_update_info' meta field if exists.
-			$meta = ( isset( $meta['_dfrps_cpt_previous_update_info'][0] ) ) ? unserialize( $meta['_dfrps_cpt_previous_update_info'][0] ) : array();
+			$meta = ( isset( $meta['_dfrps_cpt_previous_update_info'][0] ) ) ? maybe_unserialize( $meta['_dfrps_cpt_previous_update_info'][0] ) : array();
 		}
 		
 		if ( !isset( $meta['_dfrps_cpt_last_update_time_completed'][0] ) ) {
