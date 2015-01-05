@@ -636,7 +636,13 @@ class Dfrps_Cpt {
 	 * @http://codex.wordpress.org/Plugin_API/Action_Reference/save_post
 	 */
 	function save_post( $post_id ) {
-		
+	
+		// Make sure this is of type 'datafeedr-productset'.
+		$post_type = get_post_type( $post );
+		if ( $post_type != DFRPS_CPT ) {
+			return;
+		}
+				
 		add_post_meta( $post_id, '_dfrps_cpt_update_phase', 0, true );
 				
 		if ( isset( $_POST['post_status'] ) && $_POST['post_status'] != 'publish' && $_POST['post_status'] != 'future' ) {
