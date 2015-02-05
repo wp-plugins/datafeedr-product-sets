@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.1
-Stable tag: 1.1.9
+Stable tag: 1.1.10
 
 Build sets of products to import into your website.
 
@@ -49,7 +49,6 @@ We currently have one importer which imports products from your Product Sets int
 
 * WordPress Cron enabled.
 * 64MB of memory ([instructions](http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP)).
-* PHP's `allow_url_fopen` must be `On`.
 * PHP's `CURL` support must be enabled.
 * An [importer plugin](http://wordpress.org/plugins/datafeedr-woocommerce-importer/) to handle importing products from your Product Sets into your website.
 
@@ -78,6 +77,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.10 =
+* Complete rewrite of image importer script. Now, allow_url_fopen is NOT required! :)
+* Fixed bug with links generated under the bulk image importer not working for WordPress installed as a sub-directory.
 
 = 1.1.9 =
 * Fixed bug where extra postmeta data was being saved for non-productset post types.

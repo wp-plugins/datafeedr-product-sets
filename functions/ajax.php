@@ -156,9 +156,15 @@ function dfrps_ajax_batch_import_images() {
 		die;
 	}
 	
-	$object = get_post( $id );
-	do_action_ref_array( 'the_post', array( &$object ) );
-	echo '<div>Image imported for <a href="/?p=' .$object->ID . '" target="_blank">' . $object->post_title . '</a></div>';
+	$post = get_post( $id );
+	
+	// Import the image.	
+	if ( ! class_exists ( 'Dfrps_Image_Importer' ) ) {
+		require_once ( DFRPS_PATH . 'classes/class-dfrps-image-importer.php' );
+	}
+	new Dfrps_Image_Importer ( $post );
+	
+	echo '<div>Image imported for <a href="' . site_url() . '/?p=' .$post->ID . '" target="_blank">' . $post->post_title . '</a></div>';
 	die;
 }
 

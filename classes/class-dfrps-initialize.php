@@ -11,18 +11,20 @@ class Dfrps_Initialize {
 		require_once( DFRPS_PATH . 'functions/admin-functions.php' );
 	
 		// Load required classes.
-		require_once( DFRPS_PATH . 'classes/class-dfrps-cpt.php' );				// Custom post type for "Product Sets".
+		require_once( DFRPS_PATH . 'classes/class-dfrps-cpt.php' );			// Custom post type for "Product Sets".
 		require_once( DFRPS_PATH . 'classes/class-dfrps-configuration.php' );	// Configuration page.
 		require_once( DFRPS_PATH . 'classes/class-dfrps-tools.php' );			// Tools page.
 		require_once( DFRPS_PATH . 'classes/class-dfrps-help.php' );			// Help tabs.
+		require_once( DFRPS_PATH . 'classes/class-dfrps-image-importer.php' );	// Image Importer class.
 		
 		// Hooks
-		add_action( 'admin_enqueue_scripts', 	array( $this, 'load_css' ) );
-		add_action( 'admin_enqueue_scripts', 	array( $this, 'load_js' ) );
-		add_action( 'plugins_loaded', 			array( $this, 'initialize_classes' ) );
-		add_action( 'admin_menu', 				array( $this, 'admin_menu' ) );
-		add_filter( 'plugin_row_meta', 			array( $this, 'plugin_row_meta' ), 10, 2 );
-		add_filter( 'plugin_action_links_' . DFRPS_BASENAME, array( $this, 'action_links' ) );
+		add_action( 'admin_enqueue_scripts', 	array ( $this, 'load_css' ) );
+		add_action( 'admin_enqueue_scripts', 	array ( $this, 'load_js' ) );
+		add_action( 'plugins_loaded', 			array ( $this, 'initialize_classes' ) );
+		add_action( 'admin_menu', 				array ( $this, 'admin_menu' ) );
+		
+		add_filter( 'plugin_row_meta', 		array ( $this, 'plugin_row_meta' ), 10, 2 );
+		add_filter( 'plugin_action_links_' . DFRPS_BASENAME, array ( $this, 'action_links' ) );
 
 		do_action( 'dfrps_loaded' );
 	}

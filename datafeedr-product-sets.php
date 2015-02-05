@@ -8,7 +8,7 @@ Author URI: https://v4.datafeedr.com
 License: GPL v3
 Requires at least: 3.8
 Tested up to: 4.1
-Version: 1.1.9
+Version: 1.1.10
 
 Datafeedr Product Sets Plugin
 Copyright (C) 2014, Datafeedr - eric@datafeedr.com
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Define constants.
  */
-define( 'DFRPS_VERSION', 	'1.1.9' );
+define( 'DFRPS_VERSION', 	'1.1.10' );
 define( 'DFRPS_URL', 		plugin_dir_url( __FILE__ ) );
 define( 'DFRPS_PATH', 		plugin_dir_path( __FILE__ ) );
 define( 'DFRPS_BASENAME', 	plugin_basename( __FILE__ ) );
@@ -44,6 +44,25 @@ define( 'DFRPS_PREFIX', 	'dfrps' );
  * Loads required function files.
  */
 require_once( DFRPS_PATH . 'functions/functions.php' );
+
+/**
+ * Import the post's image.
+ *
+ * Instantiate the Dfrps_Image_Importer class and pass a $post object
+ * for image processing. This loads on all page loads so that images 
+ * will be uploaded even when on the frontend of the site.
+ *
+ * @since 1.1.10
+ *
+ * @param object $post A $post object for the post we want to import an image for.
+ */	
+add_action( 'the_post', 'dfrps_import_image' );
+function dfrps_import_image( $post ) {
+	if ( ! class_exists( 'Dfrps_Image_Importer' ) ) {
+		require_once( DFRPS_PATH . 'classes/class-dfrps-image-importer.php' );
+	}
+	new Dfrps_Image_Importer( $post );
+}
 
 /**
  * Notify user that the Datafeedr API plugin is missing and is required.
@@ -95,18 +114,6 @@ function dfrps_updates_disabled() {
 		echo ' <a href="' . admin_url( 'admin.php?page=dfrps_configuration' ) . '">';
 		echo  __( 'here', DFRPS_DOMAIN );
 		echo '.</a></p></div>';		
-	}
-}
-
-/**
- * Notify user that allow_url_fopen is disabled.
- */
-add_action( 'admin_notices', 'dfrps_allow_url_fopen_disabled' );
-function dfrps_allow_url_fopen_disabled() {
-	if ( !ini_get( 'allow_url_fopen' ) ) {
-		echo '<div class="update-nag" style="border-color: red;"><p>';
-		echo __( 'The <strong>Datafeedr Product Sets</strong> plugin requires <tt>allow_url_fopen</tt> be enabled. Please contact your webhost to enable <tt>allow_url_fopen</tt>.', DFRPS_DOMAIN );
-		echo '</p></div>';		
 	}
 }
 
