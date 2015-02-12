@@ -120,8 +120,8 @@ function dfrps_ajax_batch_import_images() {
 	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
 	
 	$do_import = get_option( 'dfrps_do_batch_image_import', FALSE );
-	
-	if ( !$do_import ) {
+
+	if ( ! $do_import ) {
 		echo 'Stopped'; // Don't translate this. We use this value on the other side.
 		die;
 	}
@@ -134,19 +134,23 @@ function dfrps_ajax_batch_import_images() {
 	 * WHERE post_status = publish
 	 * AND '_dfrps_product_check_image' = 1
 	 * AND '_thumbnail_id' IS NULL
+	 * AND the meta_key '_dfrps_product_set_id' exists.
 	 */
 	$id = $wpdb->get_var( "
-		SELECT pm1.post_id AS post_id 
-		FROM $wpdb->postmeta AS pm1
-		JOIN $wpdb->posts AS p
+		SELECT pm1.post_id AS post_id
+		FROM wp_postmeta AS pm1
+		JOIN wp_posts AS p
 			ON p.ID = pm1.post_id
-		LEFT JOIN $wpdb->postmeta AS pm2
+		LEFT JOIN wp_postmeta AS pm2
 			ON p.ID = pm2.post_id
 			AND pm2.meta_key = '_thumbnail_id'
+		LEFT JOIN wp_postmeta AS pm3
+			ON p.ID = pm3.post_id
 		WHERE pm1.meta_key = '_dfrps_product_check_image'
 		AND pm1.meta_value = '1'
 		AND pm2.post_id IS NULL
-		AND p.post_status = 'publish'	
+		AND pm3.meta_key = '_dfrps_product_set_id'
+		AND p.post_status = 'publish'
 		ORDER BY post_id ASC
 	" );
 	

@@ -78,6 +78,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 
 == Changelog ==
 
+= 1.1.11 =
+* Fixed a bug with the bulk image importer where it would import images for products which were having their '_dfrps_product_set_id' value deleted because they were being moved to the Trash. Now the bulk image importer only processes images for products where '_dfrps_product_set_id' does exist.
+
 = 1.1.10 =
 * Complete rewrite of image importer script. Now, allow_url_fopen is NOT required! :)
 * Fixed bug with links generated under the bulk image importer not working for WordPress installed as a sub-directory.
