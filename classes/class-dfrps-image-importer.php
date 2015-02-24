@@ -79,11 +79,13 @@ class Dfrps_Image_Importer {
 		// http://theme.fm/2011/10/how-to-upload-media-via-url-programmatically-in-wordpress-2657/
 		$thumbnail_id = $this->media_sideload_image();
 		
-		// Set as featured image.
+		// Set as featured image or fire 'dfrps_invalid_image' action.
 		if ( $thumbnail_id ) {
 			set_post_thumbnail( $this->post->ID, $thumbnail_id );
+		} else {
+			do_action( 'dfrps_invalid_image', $this->post );
 		}
-	
+
 		// Set this so we don't check this post again until after its updated again.
 		update_post_meta( $this->post->ID, '_dfrps_product_check_image', 0 );	
 	}

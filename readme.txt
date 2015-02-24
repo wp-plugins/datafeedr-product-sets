@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.1
-Stable tag: 1.1.11
+Stable tag: 1.1.12
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.12 =
+* Added back the 'dfrps_invalid_image' action hook which was inadvertently removed in version 1.1.10.
 
 = 1.1.11 =
 * Fixed a bug with the bulk image importer where it would import images for products which were having their '_dfrps_product_set_id' value deleted because they were being moved to the Trash. Now the bulk image importer only processes images for products where '_dfrps_product_set_id' does exist.
