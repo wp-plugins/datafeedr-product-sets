@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.1
-Stable tag: 1.1.12
+Stable tag: 1.1.13
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.13 =
+* Fixed a hard-coded table name in bulk image importer SQL statement.
 
 = 1.1.12 =
 * Added back the 'dfrps_invalid_image' action hook which was inadvertently removed in version 1.1.10.
