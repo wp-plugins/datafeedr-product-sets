@@ -5,8 +5,8 @@ Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
-Tested up to: 4.1
-Stable tag: 1.1.13
+Tested up to: 4.1.1
+Stable tag: 1.1.14
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.1.14 =
+* Added a check/fix for mime types that include the type of encoding. Example: "image/jpeg;charset=UTF-8" 
 
 = 1.1.13 =
 * Fixed a hard-coded table name in bulk image importer SQL statement.

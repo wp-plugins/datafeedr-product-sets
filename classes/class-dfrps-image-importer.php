@@ -260,22 +260,26 @@ class Dfrps_Image_Importer {
 	 * Returns false if mime type is not in array.
 	 */
 	function convert_mime_to_ext( $mime ) {
-	
-		$mime_to_ext = apply_filters( 
-			'dfrps_mimes_to_exts', 
+
+		// Handle mimes of values like this: "image/jpeg;charset=UTF-8"
+		$mime_array = explode( ";", $mime );
+		$mime       = $mime_array[0];
+
+		$mime_to_ext = apply_filters(
+			'dfrps_mimes_to_exts',
 			array(
 				'image/jpeg' => 'jpg',
 				'image/png'  => 'png',
 				'image/gif'  => 'gif',
 				'image/bmp'  => 'bmp',
 				'image/tiff' => 'tif',
-			) 
+			)
 		);
 
-		if ( isset( $mime_to_ext[$mime] ) ) {
-			return $mime_to_ext[$mime];
+		if ( isset( $mime_to_ext[ $mime ] ) ) {
+			return $mime_to_ext[ $mime ];
 		}
-	
+
 		return false;
 	}
 
