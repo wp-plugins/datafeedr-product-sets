@@ -125,7 +125,7 @@ function dfrps_format_product_list( $data, $context ) {
 	}
 	$manually_included_ids = array_filter( $manually_included_ids );
 	
-	// Get manually included product IDs.
+	// Get manually blocked product IDs.
 	$manually_blocked_ids = get_post_meta( $data['postid'], '_dfrps_cpt_manually_blocked_ids', true );
 	if ( !is_array( $manually_blocked_ids ) ) {
 		$manually_blocked_ids = array();
@@ -453,7 +453,26 @@ function dfrps_default_cpt_is_selected() {
 		return TRUE;
 	}
 	return FALSE;
-}		
+}
+
+/**
+ * Returns the default CPT to import into. Returns FALSE if not set.
+ */
+function dfrps_get_default_cpt_type() {
+	$configuration = (array) get_option( DFRPS_PREFIX.'_configuration' );
+	$default_cpt = ( !empty( $configuration['default_cpt'] ) ) ? $configuration['default_cpt'] : FALSE;
+	return $default_cpt;
+}
+
+/**
+ * Set Product sets CPT type to the default CPT type.
+ */
+function dfrps_set_cpt_type_to_default( $post_id) {
+	$default = dfrps_get_default_cpt_type();
+	if ( $default ) {
+		add_post_meta( $post_id, '_dfrps_cpt_type', $default, TRUE );
+	}
+}
 
 function dfrps_set_html_content_type() {
 	return 'text/html';
@@ -469,3 +488,132 @@ function dfrps_reset_product_set_update( $set_id ) {
 		delete_post_meta( $set_id, '_dfrps_cpt_update_phase' . $i . '_first_pass' );
 	}
 }
+
+/**
+ * Return array of term IDs that a product set is importing into.
+ * 
+ * $set_id: Product Set ID
+ */
+function dfrps_get_cpt_terms( $set_id, $default=array() ) {
+	// Related to Ticket: 9167
+	$term_ids = get_post_meta( $set_id, '_dfrps_cpt_terms', TRUE );
+	if ( !empty( $term_ids ) ) {
+		$term_ids = array_map( 'intval', $term_ids );
+		return $term_ids;
+	}
+	return $default;
+}
+
+/**
+ * Returns current DB version if database is out of date.
+ * Returns FALSE if DB is up to date.
+ * 
+ * The constant DFRPS_DB_VERSION was added in version 1.2.0.
+ * 
+ * @since 1.2.0
+ */
+function dfrps_db_is_outdated() {
+	$current_db_version = get_option( 'dfrps_db_version', '1.0.0' );	
+	if ( version_compare( $current_db_version, DFRPS_DB_VERSION, '<' ) ) {
+		return $current_db_version;
+	}
+	return FALSE;
+}
+
+/**
+ * Check if Product Set is active or inactive.
+ *
+ * This helper function returns true if the Product Set is currently active or inactive. 'active' means that the
+ * custom post type which this Product Set imports into (ie. '_dfrps_cpt_type') currently is registered by its
+ * corresponding importer plugin. For example, if the Datafeedr WooCommerce Importer plugin is not active, then passing
+ * 'product' into this function will return false.
+ *
+ * @since 1.2.0
+ *
+ * @param string $set_type The 'post_type' to check registered_cpts against.
+ *
+ * @return boolean Return true if type is active, false if inactive.
+ */
+function dfrps_set_is_active( $set_type ) {
+	$registered_cpts = get_option( 'dfrps_registered_cpts', array() );
+	if ( ! in_array( $set_type, array_keys( $registered_cpts ) ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Upgrade Product Set to version 1.2.0.
+ *
+ * This upgrades a Product Set to version 1.2.0. This involves a number of actions:
+ * - Set '_dfrps_cpt_type' to 'product'. Hardcoded because no other CPT existed before this version.
+ * - Set Product Set as having been published. This prevents the Product Set from being imported into another CPT.
+ * - Converts '_dfrps_cpt_categories' to '_dfrps_cpt_terms'.
+ * - Delete deprecated post meta.
+ * - Update Product Set version to 1.2.0.
+ *
+ * This is related to ticket #9167.
+ *
+ * @since 1.2.0
+ *
+ * @param mixed $post Should be a full Post Object, Full Post Array or a Post ID.
+ */
+add_action( 'the_post', 'dfrps_upgrade_product_set_to_120', 20, 1 );
+function dfrps_upgrade_product_set_to_120( $post ) {
+
+	// Set $post_id and $post_type.
+	if ( is_array( $post ) ) {
+		$post_id   = $post['ID'];
+		$post_type = ( isset( $post['post_type'] ) ) ? $post['post_type'] : '';
+	} elseif ( is_object( $post ) ) {
+		$post_id   = $post->ID;
+		$post_type = ( isset( $post->post_type ) ) ? $post->post_type : '';
+	} else {
+		$post_id   = $post;
+		$post_type = get_post_type( $post_id );
+	}
+
+	// Don't do anything if this is not a Datafeedr Product Set.
+	if ( $post_type != DFRPS_CPT ) {
+		return true;
+	}
+
+	// If we've already updated this Product Set, skip it.
+	$current_set_version = get_metadata( 'post', $post_id, '_dfrps_current_version', true );
+	if ( version_compare( $current_set_version, '1.2.0', '>=' ) ) {
+		return true;
+	}
+
+	// Hardcoded because no other CPTs existed except 'product' before v1.2.0.
+	add_post_meta( $post_id, '_dfrps_cpt_type', 'product', true );
+
+	// Set Product Set as having been published.
+	update_post_meta( $post_id, '_dfrps_has_been_published', true );
+
+	// Get categories this Set is associated with.
+	$cpt_categories = get_post_meta( $post_id, '_dfrps_cpt_categories', true );
+
+	// Set term IDs. Hardcoded because no other CPTs existed before 'product' before version 1.2.0.
+	$term_ids = ( isset( $cpt_categories['product'] ) && ! empty( $cpt_categories['product'] ) )
+		? $cpt_categories['product']
+		: array();
+
+	if ( ! empty( $term_ids ) ) {
+		$term_ids = array_map( 'intval', $term_ids );
+		add_post_meta( $post_id, '_dfrps_cpt_terms', $term_ids, true );
+	}
+
+	// Delete deprecated post meta.
+	delete_metadata( 'post', $post_id, '_dfrps_option_ids' ); // This is leftover from pre-beta.
+	delete_metadata( 'post', $post_id, '_dfrps_cpt_categories' );
+	delete_metadata( 'post', $post_id, '_dfrps_cpt_categories_history' );
+	delete_metadata( 'post', $post_id, '_dfrps_cpt_import_into' );
+
+	// Set Product Set as updated to v1.2.0
+	update_post_meta( $post_id, '_dfrps_current_version', '1.2.0' );
+
+	return true;
+}
+
+

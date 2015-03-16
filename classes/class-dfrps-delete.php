@@ -35,19 +35,13 @@ class Dfrps_Delete {
 		return 0;
 	}
 	
-	// Get CPTs that products can potentially be imported in to.
-	function get_cpts_to_import_into() {
-		$cpts = maybe_unserialize( @$this->meta['_dfrps_cpt_import_into'][0] );
-		if ( !empty( $cpts ) ) {
-			asort( $cpts );
-			return $cpts;
-		}
-		return array();
-	}
+	// Get the CPT that this Product Set will import into.
+	function get_cpt_type() {
+		return get_post_meta( $this->set['ID'], '_dfrps_cpt_type', TRUE ); // Ticket: 9167
+	} 
 
 	// Run update.
 	function update() {
-		
 		if ( $this->phase == 0 || $this->phase == 1 ) {
 			$this->phase1();
 		} elseif ( $this->phase == 2 ) {
@@ -56,21 +50,17 @@ class Dfrps_Delete {
 	}
 	
 	function preprocess_complete_check() {
-		foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-			$complete = get_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $cpt, true );
-			if ( $complete == '' ) {
-				return false;
-			}
+		$complete = get_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $this->get_cpt_type(), true );
+		if ( empty( $complete ) ) {
+			return false;
 		}
 		return true;
 	}
 	
 	function postprocess_complete_check() {
-		foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-			$complete = get_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $cpt, true );
-			if ( $complete == '' ) {
-				return false;
-			}
+		$complete = get_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $this->get_cpt_type(), true );
+		if ( empty( $complete ) ) {
+			return false;
 		}
 		return true;
 	}
@@ -100,11 +90,9 @@ class Dfrps_Delete {
 		do_action( 'dfrps_begin_phase_1', $this );
 						
 		if( $this->is_first_pass() ) {
-			
+
 			// Set preprocess incomplete for each CPT that this set imports into.
-			foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-				update_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $cpt, false );
-			}
+			update_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $this->get_cpt_type(), FALSE );
 			
 			delete_post_meta( $this->set['ID'], '_dfrps_cpt_errors' );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 1 );
@@ -120,7 +108,7 @@ class Dfrps_Delete {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_num_products_deleted', 0 );
 		}
 		
-		do_action( 'dfrps_preprocess', $this );
+		do_action( 'dfrps_preprocess-' . $this->get_cpt_type(), $this );
 		
 		// Check if preprocess is complete (detemined by importer scripts)
 		$preprocess_complete = $this->preprocess_complete_check();
@@ -146,12 +134,10 @@ class Dfrps_Delete {
 				
 		if( $this->is_first_pass() ) {	
 			// Set postprocess incomplete for each CPT that this set imports into.
-			foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-				update_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $cpt, false );
-			}
+			update_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $this->get_cpt_type(), FALSE );
 		}
 				
-		do_action( 'dfrps_postprocess', $this );
+		do_action( 'dfrps_postprocess-' . $this->get_cpt_type(), $this );
 		
 		// Check if preprocess is complete (detemined by importer scripts)
 		$postprocess_complete = $this->postprocess_complete_check();

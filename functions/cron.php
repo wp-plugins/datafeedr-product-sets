@@ -45,13 +45,13 @@ function dfrps_get_product_set_to_update() {
 	// Check if an update is already running.
 	$doing_update = get_transient( 'dfrps_doing_update' );
 	if ( $doing_update !== false ) {
-		return;		
+		return true;
 	}
 
 	// Check that updates are enabled.
 	$options = get_option( 'dfrps_configuration', array() );
 	if ( $options['updates_enabled'] == 'disabled' ) {
-		return;
+		return true;
 	}
 
 	// Check that at least 1 network is selected.
@@ -65,23 +65,32 @@ function dfrps_get_product_set_to_update() {
 	if ( empty( $merchants['ids'] ) ) {
 		return true;
 	}
-		
-	global $wpdb;
 	
 	// Return if no CPTs exist to import into.
 	$registered_cpts = get_option( 'dfrps_registered_cpts', array() );
 	if ( empty( $registered_cpts ) ) {
-		return;
+		return true;
+	} else {
+		$cpts = array_keys( $registered_cpts );
+		$sql_cpts = implode( "','", $cpts );
 	}
-		
-	$next_update_time = dfrps_get_next_update_time();
-	
+
+	// Check that DFRPSWC importer is compatible.
+	if ( defined( 'DFRPSWC_VERSION' ) ) {
+		if ( version_compare( DFRPSWC_VERSION, '1.2.0', '<' ) ) {
+			return true;
+		}
+	}
+
+	global $wpdb;
+
 	$post = $wpdb->get_row( "
 		
 		SELECT 
 			p.*,
 			update_phase.meta_value AS update_phase,
-			next_update.meta_value AS next_update
+			next_update.meta_value AS next_update,
+			cpt_type.meta_value AS cpt_type
 		
 		FROM $wpdb->posts p
 		
@@ -92,6 +101,10 @@ function dfrps_get_product_set_to_update() {
 		LEFT JOIN $wpdb->postmeta AS next_update 
 			ON p.ID = next_update.post_id
 			AND next_update.meta_key = '_dfrps_cpt_next_update_time'
+
+		LEFT JOIN $wpdb->postmeta AS cpt_type 
+			ON p.ID = cpt_type.post_id
+			AND cpt_type.meta_key = '_dfrps_cpt_type'
 			
 		WHERE p.post_type = '" . DFRPS_CPT . "'
 		AND (
@@ -99,6 +112,7 @@ function dfrps_get_product_set_to_update() {
 			OR 
 			p.post_status = 'trash'
 		)
+		AND cpt_type.meta_value IN ('" . $sql_cpts . "')
 				
 		ORDER BY 
 			CAST(update_phase.meta_value AS UNSIGNED) DESC,
@@ -107,42 +121,51 @@ function dfrps_get_product_set_to_update() {
 		LIMIT 1
 			
 	", ARRAY_A );
-	
+
+	// Return if no $post exists.
+	if ( is_null( $post ) ) {
+		return true;
+	}
+
+	// Make sure this product set is version 1.2.0 or greater.
+	dfrps_upgrade_product_set_to_120( $post );
+
 	$post = apply_filters( 'dfrps_cron_before_delete_or_update', $post );
 
 	/**
-	 * First check if post_status is 'trash'. Trashed sets 
+	 * First check if post_status is 'trash'. Trashed sets
 	 * get priority as we need to remove those products
 	 * from the store ASAP.
 	 */
 	if ( $post['post_status'] == 'trash' && $post['next_update'] <= date_i18n( 'U' ) ) {
+
 		require_once( DFRPS_PATH . 'classes/class-dfrps-delete.php' );
 		new Dfrps_Delete( $post );
-		return;
+		return true;
 	}
 	
-	/**
+	/*
 	 * If a Product Set is currently in an update phase
 	 * or, if a Product Set's next update time is now
 	 * or, if a Product Set's next update time is 0
 	 * then, run the update.
 	 */
 	if ( 
-		$post['post_status'] == 'publish' && 
+		$post['post_status'] == 'publish' &&
 		(
-			$post['update_phase'] > 0 || 
-			$post['next_update'] <= date_i18n( 'U' ) || 
-			$post['next_update'] == 0 
+			$post['update_phase'] > 0 ||
+			$post['next_update'] <= date_i18n( 'U' ) ||
+			$post['next_update'] == 0
 		) ) {
 		
 		if ( isset( $post['ID'] ) && ( $post['ID'] > 0 ) ) {
 		
 			$post['registered_cpts'] = $registered_cpts;
-		
+	
 			// Update Product Set.
 			require_once( DFRPS_PATH . 'classes/class-dfrps-update.php' );
 			new Dfrps_Update( $post );
-			return;
+			return true;
 		}
 	}
 }

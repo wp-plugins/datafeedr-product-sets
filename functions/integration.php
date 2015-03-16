@@ -22,17 +22,28 @@ function dfrps_register_cpt( $post_type, $args ) {
 	update_option( 'dfrps_registered_cpts', $cpts );
 }
 
-function dfrps_unregister_cpt( $post_type ) {
+
+function dfrps_unregister_cpt( $post_type = false ) {
+
+	if ( ! $post_type ) {
+		return;
+	}
+
+	/**
+	 * Reset updates to prevent an importer from appearing not to finish
+	 * (ie. displaying progress bar) on the Products Sets page.
+	 */
+	dfrps_reset_update();
 
 	$cpts = get_option( 'dfrps_registered_cpts', array() );
-	unset( $cpts[$post_type] );
-	
+	unset( $cpts[ $post_type ] );
+
 	// Update default_cpt if there are other CPTs available.
 	// Otherwise the user will see the "install importer plugin" nag.
-	if ( !empty( $cpts ) ) {
+	if ( ! empty( $cpts ) ) {
 		$configuration = get_option( 'dfrps_configuration', array() );
-		$default_cpt = $configuration['default_cpt'];
-		
+		$default_cpt   = $configuration['default_cpt'];
+
 		// The CPT being unregistered is the default CPT.  So update the default CPT with another arbitrary CPT.
 		if ( $default_cpt == $post_type ) {
 			foreach ( $cpts as $type => $values ) {
@@ -105,34 +116,44 @@ function dfrps_add_term( $taxonomy, $paths ) {
 }
 
 /**
- * This gets the category IDs for the current post (ie. the product
- * that was already imported into the database) and removes the
- * IDs from the post.
- * 
- * Why?
- * 
- * We need to delete this set's current category IDs from this product
- * so that at the end of the update, if this product isn't re-imported
- * during the update, the post/product's category information (for this
- * set) will no longer be available so that if this post/product was 
- * added via another Product Set, only that Product Set's category IDs
- * will be attributed to this post/product.
+ * This adds the term IDs to the post (ie. product, coupon, etc) except for 
+ * the post that we are currently updating. If the post is not getting deleted,
+ * then its term IDs will be added by the integration plugin.
  */
-function dfrps_remove_category_ids_from_post( $post_id, $set, $cpt, $taxonomy ) {
+function dfrps_add_term_ids_to_post( $post_id, $set, $cpt, $taxonomy ) {
 	
-	// Get the category IDs associated with this Set.
-	$this_sets_categories = maybe_unserialize( $set['postmeta']['_dfrps_cpt_categories_history'][0] );
-	$this_sets_categories =  $this_sets_categories[$cpt];
-	
-	if ( is_array( $this_sets_categories ) && !empty( $this_sets_categories ) ) {
-		$terms = array();
-		foreach ( $this_sets_categories as $term ) {
-			$terms[] = intval( $term );
+	// Get all Product Set IDs which added this product. This returns and array of ids.
+	$set_ids = get_post_meta( $post_id, '_dfrps_product_set_id', FALSE );
+
+	// Loop through all set_ids and remove this set's ID from the $set_ids array.
+	$this_set_id = intval( $set['ID'] );
+	if ( isset( $set_ids ) && !empty( $set_ids ) ) {
+		$set_ids = array_map ( 'intval', $set_ids );
+		foreach ( $set_ids as $set_id ) {
+			if ( ( $key = array_search( $this_set_id, $set_ids ) ) !== false ) {
+				unset( $set_ids[$key] );
+			}
 		}
-		wp_remove_object_terms( $post_id, $terms, $taxonomy );
 	}
+	
+	// Loop through remaining sets (all set IDs expect this set id) and 
+	// get the term ids for the other sets.
+	$terms = array();
+	if ( isset( $set_ids ) && !empty( $set_ids ) ) {
+		foreach ( $set_ids as $id ) {
+			$terms = array_merge( $terms, dfrps_get_cpt_terms( $id ) );
+		}
+	}
+	$terms = array_map( 'intval', $terms ); // Make sure these $terms are integers
+	$terms = array_unique( $terms );
+
+	// Add term ids to this product.
+	wp_set_object_terms( $post_id, $terms, $taxonomy, FALSE );
 }
 
+/**
+ * Returns array of post IDs that were added by this set ID.
+ */
 function dfrps_get_all_post_ids_by_set_id( $set_id ) {
 	
 	global $wpdb;
@@ -173,8 +194,7 @@ function dfrps_get_existing_post( $product, $set ) {
 	
 	global $wpdb;
 	
-	$import_into = get_post_meta( $set['ID'], '_dfrps_cpt_import_into', true );
-	$import_into = implode( "','", $import_into );
+	$import_into = get_post_meta( $set['ID'], '_dfrps_cpt_type', true );
 	
 	$post = $wpdb->get_row( $wpdb->prepare( "
 		SELECT * 
@@ -183,7 +203,7 @@ function dfrps_get_existing_post( $product, $set ) {
 			ON pm1.post_id = p.ID
 		WHERE pm1.meta_key = '_dfrps_product_id' 
 		AND pm1.meta_value = %s
-		AND p.post_type IN ( '" . $import_into . "' )
+		AND p.post_type = '" . $import_into . "'
 	", $product['_id'] ), ARRAY_A );
 	
 	if ( $post != NULL ) {

@@ -610,7 +610,6 @@ $nonce = wp_create_nonce( 'dfrps_ajax_nonce' );
 
 		$(".datafeedr-productset_admin").on("click", ".selectit input", function(e) {
 			save_category_selection($(this).closest('.categorychecklist'));
-
 		});
 
 		// see wp-includes/js/wp-lists.js
@@ -621,17 +620,18 @@ $nonce = wp_create_nonce( 'dfrps_ajax_nonce' );
 		$(".datafeedr-productset_admin").on('click', '.dfrps_cpt_picker', function() {
 
 			$("#dfrps_cpt_picker_metabox input").attr("disabled", true);
+			$(".dfrps_category_metabox").slideUp().fadeOut();
 
 			var id = $(this).attr("id");
-
-			var cpts = $("#dfrps_cpt_picker_metabox input:checked").map(function() {
+			
+			var term_ids = $("#"+id+"_chooser .categorychecklist input:checked").map(function() {
 				return $(this).val();
 			}).get();
+			
+			var type = $("#dfrps_cpt_picker_metabox input:checked").val();
 
 			if ($(this).is(':checked')) {
-				$("#"+id+"_chooser").slideDown();
-			} else {
-				$("#"+id+"_chooser").slideUp();
+				$("#"+id+"_chooser").slideDown(1000);
 			}
 				
 			$.ajax({
@@ -641,7 +641,8 @@ $nonce = wp_create_nonce( 'dfrps_ajax_nonce' );
 					action: "dfrps_ajax_update_import_into",
 					dfrps_security: "<?php echo $nonce; ?>",
 					postid: <?php echo get_the_ID(); ?>,
-					cpts: cpts
+					type: type,
+					term_ids: term_ids
 				}
 			}).done(function( html ) {	
 				$("#dfrps_cpt_picker_metabox input").removeAttr("disabled");

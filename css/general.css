@@ -168,10 +168,29 @@
 
 .dfrps_highlight_row > th { text-indent: 10px; }
 
+.dfrps_cpt_type {
+    font-size: 11px;
+    color: #999;
+    line-height: 1em;
+    margin-bottom: 3px;
+}
 
+.dfrps_cpt_active {
+    font-size: 11px;
+    color: #5cb85c;
+    line-height: 1em;
+    font-weight: bold;
+}
 
-.clearfix:after {clear:both; content:'.'; display:block; visibility:hidden; height:0;} 
-.clearfix {display:inline-block; } 
-* html .clearfix {height:1%; } 
-.clearfix {display:block; } 
+.dfrps_cpt_inactive {
+    font-size: 11px;
+    color: #d9534f;
+    line-height: 1em;
+    font-weight: bold;
+}
+
+.clearfix:after {clear:both; content:'.'; display:block; visibility:hidden; height:0;}
+.clearfix {display:inline-block; }
+* html .clearfix {height:1%; }
+.clearfix {display:block; }
 .clearingdiv {clear:left; font-size:0; line-height:0; margin:0; padding:0; }

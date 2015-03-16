@@ -37,23 +37,19 @@ class Dfrps_Update {
 		return $phase;
 	}
 
-	// Get CPTs that products can potentially be imported in to.
-	function get_cpts_to_import_into() {
-		$cpts = maybe_unserialize( @$this->meta['_dfrps_cpt_import_into'][0] );
-		if ( !empty( $cpts ) ) {
-			asort( $cpts );
-			return $cpts;
-		}
-		return array();
+	// Get the CPT that this Product Set will import into.
+	function get_cpt_type() {
+		$type = get_post_meta( $this->set['ID'], '_dfrps_cpt_type', TRUE );
+		return $type;
 	}
-	
+
 	// Create temporary product table.
 	function create_temp_product_table() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dfrps_product_data';
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "
-		CREATE TABLE IF NOT EXISTS $table 
+		CREATE TABLE IF NOT EXISTS $table
 		(
 			product_id varchar(255) DEFAULT '' PRIMARY KEY,
 			data LONGTEXT,
@@ -62,17 +58,17 @@ class Dfrps_Update {
 	   	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
 	}
-	
+
 	// Insert into temporary product table.
 	function insert_temp_product( $product ) {
 		if ( !isset( $product['_id'] ) ) { return FALSE; }
 		global $wpdb;
-		$table = $wpdb->prefix . 'dfrps_product_data';		
+		$table = $wpdb->prefix . 'dfrps_product_data';
 		$data = array( 'product_id' => $product['_id'], 'data' => serialize( $product ) );
 		$result = $wpdb->replace( $table, $data );
 	   	// return TRUE; Removed in v1.1.8
 	}
-	
+
 	// Get products from temp table to update.
 	function select_products_for_update() {
 		global $wpdb;
@@ -81,45 +77,45 @@ class Dfrps_Update {
 		$products = $wpdb->get_results( $sql, ARRAY_A );
 		return $products;
 	}
-	
+
 	// Delete a product record from the temp table.
 	function delete_product_from_table( $id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dfrps_product_data';
 		$wpdb->delete( $table, array( 'product_id' => $id ) );
 	}
-	
+
 	// Drop the temp product table.
 	function drop_temp_product_table() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dfrps_product_data';
-		$wpdb->query( "DROP TABLE IF EXISTS $table" );		
+		$wpdb->query( "DROP TABLE IF EXISTS $table" );
 	}
 
 	// Run update.
 	function update() {
-				
+
 		// Set transient to 5 minutes time + cron interval.
 		$cron_interval = intval( $this->config['cron_interval'] );
 		set_transient( 'dfrps_doing_update', 1, ( ( MINUTE_IN_SECONDS * 5 ) + $cron_interval ) );
-		
+
 		// Begin endless loop
 		while( 1 ) {
 
 			// Get current phase.
 			$current_phase = $this->current_phase();
-			
+
 			do_action( 'dfrps_begin_update_phase_' . $current_phase, $current_phase, $this );
-	
+
 			// Create method name.
 			$phase = 'phase' . $current_phase;
-	
+
 			// Check if method exists.
-			if ( !method_exists( $this, $phase ) ) { 
+			if ( ! method_exists( $this, $phase ) ) {
 				break;
 			}
-	
-			// Call method and get results of method. 
+
+			// Call method and get results of method.
 			// Results: skip, ready, repeat, complete
 			$result = $this->$phase();
 
@@ -142,22 +138,22 @@ class Dfrps_Update {
 				do_action( 'dfrps_end_update_phase_' . $current_phase, $current_phase, $this );
 				break; // don't update phase, just stop the loop
 			}
-	
+
 			// Full update is complete, update phase and break.
 			if ( $result == 'complete' ) {
 				update_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase', 0 );
 				do_action( 'dfrps_end_update_phase_' . $current_phase, $current_phase, $this );
 				break;  // update phase and stop the loop
 			}
-			
+
 		} // while( 1 ) {
 
 		delete_transient( 'dfrps_doing_update' );
 	}
-	
+
 	// Count each iteraction of the update process.
 	function count_iteration() {
-		$iteration = get_post_meta( $this->set['ID'], '_dfrps_cpt_update_iteration', true );		
+		$iteration = get_post_meta( $this->set['ID'], '_dfrps_cpt_update_iteration', true );
 		if( !empty( $iteration ) ) {
 			$iteration = intval( $iteration );
 			$iteration = ( $iteration + 1 );
@@ -167,53 +163,49 @@ class Dfrps_Update {
 			add_post_meta( $this->set['ID'], '_dfrps_cpt_update_iteration', $iteration, true );
 		}
 	}
-	
+
 	function preprocess_complete_check() {
-		foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-			$complete = get_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $cpt, true );
-			if ( $complete == '' ) {
-				return false;
-			}
+		$complete = get_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $this->get_cpt_type(), true );
+		if ( empty( $complete ) ) {
+			return false;
 		}
 		return true;
 	}
-	
+
 	function postprocess_complete_check() {
-		foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-			$complete = get_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $cpt, true );
-			if ( $complete == '' ) {
-				return false;
-			}
+		$complete = get_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $this->get_cpt_type(), true );
+		if ( empty( $complete ) ) {
+			return false;
 		}
 		return true;
 	}
-	
+
 	function is_first_pass() {
 		$first_pass = get_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase' . $this->phase . '_first_pass', true );
 		if ( empty( $first_pass ) ) {
 			// This is the first pass for this phase.
-			add_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase' . $this->phase . '_first_pass', true, true );	
+			add_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase' . $this->phase . '_first_pass', true, true );
 			return TRUE;
 		}
 		return FALSE;
 	}
-	
+
 	function delete_first_passes() {
 		for( $i=1; $i<=5; $i++ ) {
 			delete_post_meta( $this->set['ID'], '_dfrps_cpt_update_phase' . $i . '_first_pass' );
 		}
 	}
-	
+
 	function defer_counting( $bool ) {
 		wp_defer_term_counting( $bool );
 		wp_defer_comment_counting( $bool );
 	}
-	
+
 	function handle_error( $data ) {
 
 		// Regarding Ticket #8262
 		$class = $data['dfrapi_api_error']['class'];
-		
+
 		// These are the ERROR classes that trigger updates to be disabled.
 		$error_classes = array(
 			'DatafeedrBadRequestError',
@@ -221,41 +213,41 @@ class Dfrps_Update {
 			'DatafeedrLimitExceededError',
 			'DatafeedrQueryError',
 		);
-		
+
 		$error_classes = apply_filters( 'dfrps_disable_updates_error_classes', $error_classes );
-		
+
 		if ( in_array( $class, $error_classes ) ) {
 			$this->config['updates_enabled'] = 'disabled';
 			update_option( 'dfrps_configuration', $this->config );
 			$this->updates_disabled_email_user( $data );
 		}
 	}
-	
+
 	function updates_disabled_email_user( $obj ) {
 
 		$params 			= array();
 		$params['to'] 		= get_bloginfo( 'admin_email' );
 		$params['subject']  = get_bloginfo( 'name' ) . __( ': Datafeedr API Message (Product Set Update Failed)', DFRPS_DOMAIN );
-		
+
 		$params['message']  = "<p>" . __( "This is an automated message generated by: ", DFRPS_DOMAIN ) . get_bloginfo( 'wpurl' ) . "</p>";
 		$params['message'] .= "<p>" . __( "An error occurred during the update of the ", DFRPS_DOMAIN );
 		$params['message'] .= "<a href=\"" . admin_url( 'post.php?post=' . $this->set['ID'] . '&action=edit' ) . "\">" . $this->set['post_title'] . "</a>";
 		$params['message'] .= __( " product set.", DFRPS_DOMAIN ) . "</p>";
-		
+
 		if ( isset( $obj['dfrapi_api_error']['class'] ) ) {
-			
+
 			// Have we exceeded the API request limit?
 			if ( $obj['dfrapi_api_error']['class'] == 'DatafeedrLimitExceededError' ) {
-				
+
 				$params['message'] .= "<p>" . __( "You have used <strong>100%</strong> of your allocated Datafeedr API requests for this period. <u>You are no longer able to query the Datafeedr API to get product information.</u>", DFRPS_DOMAIN ) . "</p>";
 				$params['message'] .= "<p><strong>" . __( "What to do next?", DFRPS_DOMAIN ) . "</strong></p>";
 				$params['message'] .= "<p>" . __( "We strongly recommend that you upgrade to prevent your product information from becoming outdated.", DFRPS_DOMAIN ) . "</p>";
 				$params['message'] .= "<p><a href=\"" . dfrapi_user_pages( 'change' ) . "?utm_source=email&utm_medium=link&utm_campaign=updatesdisablednotice\"><strong>" . __( "UPGRADE NOW", DFRPS_DOMAIN ) . "</strong></a></p>";
 				$params['message'] .= "<p>" . __( "Upgrading only takes a minute. You will have <strong>instant access</strong> to more API requests. Any remaining credit for your current plan will be applied to your new plan.", DFRPS_DOMAIN ) . "</p>";
 				$params['message'] .= "<p>" . __( "You are under no obligation to upgrade. You may continue using your current plan for as long as you would like.", DFRPS_DOMAIN ) . "</p>";
-								
+
 			} else {
-				
+
 				$params['message'] .= "<p>" . __( "The details of the error are below.", DFRPS_DOMAIN ) . "</p>";
 				$params['message'] .= "<tt>";
 				$params['message'] .= "#################################################<br />";
@@ -268,9 +260,9 @@ class Dfrps_Update {
 				}
 				$params['message'] .= "#################################################";
 				$params['message'] .= "</tt>";
-			}		
+			}
 		}
-		
+
 		$params['message'] .= "<p>" . __( "In the meantime, all product updates have been disabled on your site. After you fix this problem you will need to ", DFRPS_DOMAIN );
 		$params['message'] .= "<a href=\"" . admin_url( 'admin.php?page=dfrps_configuration' ) . "\">" . __( "enable updates again", DFRPS_DOMAIN ) . ".</p>";
 		$params['message'] .= "<p>" . __( "If you have any questions about your account, please ", DFRPS_DOMAIN );
@@ -282,27 +274,24 @@ class Dfrps_Update {
 		$params['message'] .= "<a href=\"" . dfrapi_user_pages( 'change' ) . "?utm_source=email&utm_medium=link&utm_campaign=updatesdisablednotice\">" . __( "Upgrade Account", DFRPS_DOMAIN ) . "</a> | ";
 		$params['message'] .= "<a href=\"" . admin_url( 'admin.php?page=dfrps_configuration' ) . "\">" . __( "Enable Updates", DFRPS_DOMAIN ) . "</a>";
 		$params['message'] .= "</p>";
-		
+
 		add_filter( 'wp_mail_content_type', 'dfrps_set_html_content_type' );
 		wp_mail( $params['to'], $params['subject'], $params['message'] );
 		remove_filter( 'wp_mail_content_type', 'dfrps_set_html_content_type' );
-		
 	}
-	
+
 	// Phase 1, initialize update, set variables and update phase.
 	function phase1() {
-	
+
 		$this->phase = 1;
-						
+
 		if( $this->is_first_pass() ) {
-			
-			// Set preprocess incomplete for each CPT that this set imports into.
-			foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-				update_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $cpt, false );
-			}
-			
+
+			// Set preprocess incomplete for CPT type that this set imports into.
+			update_post_meta( $this->set['ID'], '_dfrps_preprocess_complete_' . $this->get_cpt_type(), false );
+
 			delete_post_meta( $this->set['ID'], '_dfrps_cpt_errors' );
-				
+
 			unset( $this->meta['_dfrps_cpt_previous_update_info'] ); // Unset so array item is not duplicated
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_previous_update_info', $this->meta );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_update_iteration', 1 );
@@ -315,12 +304,12 @@ class Dfrps_Update {
 		} else {
 			$this->count_iteration();
 		}
-		
-		do_action( 'dfrps_preprocess', $this );
-		
+
+		do_action( 'dfrps_preprocess-' . $this->get_cpt_type(), $this );
+
 		// Check if preprocess is complete (detemined by importer scripts)
 		$preprocess_complete = $this->preprocess_complete_check();
-				
+
 		// Move to phase 2 ONLY if all posts have been unset from their categories.
 		if ( $preprocess_complete ) {
 			// DROP TABLE to remove any remaining products from this table.
@@ -329,35 +318,35 @@ class Dfrps_Update {
 			$this->create_temp_product_table();
 			return "ready";
 		}
-		
-		return 'repeat';	
+
+		return 'repeat';
 	}
-	
+
 	// Phase 2, import saved search products into the options table.
 	function phase2() {
-	
+
 		$this->phase = 2;
 
 		$this->count_iteration();
-		
+
 		$query = ( isset( $this->meta['_dfrps_cpt_query'][0] ) ) ? maybe_unserialize( $this->meta['_dfrps_cpt_query'][0] ) : array();
-	
+
 		// Check that a saved search exists and move on if it doesn't.
 		if ( empty( $query ) ) {
 			return 'skip';
 		}
-		
+
 		// Get manually blocked product IDs.
 		$blocked = get_post_meta( $this->set['ID'], '_dfrps_cpt_manually_blocked_ids', true );
 		$manually_blocked = ( is_array( $blocked ) && !empty( $blocked ) ) ? $blocked : array();
-				
+
 		// Run query.
-		//$data = dfrapi_api_get_products_by_query( $query, $this->config['num_products_per_update'], $this->meta['_dfrps_cpt_offset'][0], $manually_blocked ); 
-		$data = dfrapi_api_get_products_by_query( $query, $this->config['num_products_per_api_request'], $this->meta['_dfrps_cpt_offset'][0], $manually_blocked ); 
-		
+		//$data = dfrapi_api_get_products_by_query( $query, $this->config['num_products_per_update'], $this->meta['_dfrps_cpt_offset'][0], $manually_blocked );
+		$data = dfrapi_api_get_products_by_query( $query, $this->config['num_products_per_api_request'], $this->meta['_dfrps_cpt_offset'][0], $manually_blocked );
+
 		// Update number of API requests.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_num_api_requests', ( $this->meta['_dfrps_cpt_last_update_num_api_requests'][0] + 1 ) );
-	
+
 		// Handle errors & return.
 		if ( is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', $data );
@@ -368,152 +357,148 @@ class Dfrps_Update {
 		// Delete any errors that are currently being stored.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', false );
 
-		// If there are products, store product data in options table.		
+		// If there are products, store product data in options table.
 		if ( isset( $data['products'] ) && !empty( $data['products'] ) ) {
-					
+
 			foreach ( $data['products'] as $product ) {
 				$this->insert_temp_product( $product );
 			}
-						
+
 		} else {
-		
+
 			// No products, update "Phase".
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
 			return 'ready';
 		}
-		
+
 		// All products in this batch have been imported into the options table.  Now update some meta stuff.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', ( $this->meta['_dfrps_cpt_offset'][0] + 1 ) );
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_num_products_added', ( $this->meta['_dfrps_cpt_last_update_num_products_added'][0] + count( $data['products'] ) ) );
-		
-		// If the number of products is less than the number of products per update 
+
+		// If the number of products is less than the number of products per update
 		// (that means subsequent queries wont return any more products).
 		// Move to next phase so as not to incur 1 additional API request.
 		if ( ( count( $data['products'] ) < $this->config['num_products_per_api_request'] ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
-			return 'ready';		
+			return 'ready';
 		}
-		
+
 		return 'repeat';
 	}
-	
+
 	// Phase 3, import single products into the options table.
 	function phase3() {
-	
+
 		$this->phase = 3;
-		
+
 		$this->count_iteration();
-		
+
 		// Get included IDs and remove any duplicates or empty values.
 		$ids = get_post_meta( $this->set['ID'], '_dfrps_cpt_manually_added_ids', true );
 		$ids = array_filter( (array) $ids );
-				
+
 		// If no IDs, update phase and go to Phase 3.
 		if ( empty( $ids ) ) {
 			return 'skip';
-		}	
-				
+		}
+
 		// Query API
 		//$data = dfrapi_api_get_products_by_id( $ids, $this->config['num_products_per_update'], $this->meta['_dfrps_cpt_offset'][0] );
 		$data = dfrapi_api_get_products_by_id( $ids, $this->config['num_products_per_api_request'], $this->meta['_dfrps_cpt_offset'][0] );
-				
+
 		// Update number of API requests.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_num_api_requests', ( $this->meta['_dfrps_cpt_last_update_num_api_requests'][0] + 1 ) );
-	
+
 		// Handle errors & return.
 		if ( is_array( $data ) && array_key_exists( 'dfrapi_api_error', $data ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', $data );
 			$this->handle_error( $data );
 			return 'repeat';
 		}
-				
+
 		// Delete any errors that are currently being stored.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_errors', false );
-		
-		// If there are products, store product data in options table.		
+
+		// If there are products, store product data in options table.
 		if ( isset( $data['products'] ) && !empty( $data['products'] ) ) {
 			foreach ( $data['products'] as $product ) {
 				$this->insert_temp_product( $product );
 			}
 		}
-				
+
 		// All products in this batch have been imported into the options table.  Now update some meta stuff.
 		update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', ( $this->meta['_dfrps_cpt_offset'][0] + 1 ) );
-		update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_num_products_added', ( $this->meta['_dfrps_cpt_last_update_num_products_added'][0] + count( $data['products'] ) ) );	
-		
-		// If the number of product IDs is less than the number of products per update 
+		update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_num_products_added', ( $this->meta['_dfrps_cpt_last_update_num_products_added'][0] + count( $data['products'] ) ) );
+
+		// If the number of product IDs is less than the number of products per update
 		// (that means we've queried ALL product IDs).
-		// Move to next phase.		
+		// Move to next phase.
 		$offset = ( $this->config['num_products_per_api_request'] * ( $this->meta['_dfrps_cpt_offset'][0] - 1 ) );
 		$length = $this->config['num_products_per_api_request'];
 		$current_range_of_ids = array_slice( $ids, $offset, $length );
-		
+
 		if ( ( count( $current_range_of_ids ) < $this->config['num_products_per_api_request'] ) ) {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_offset', 1 );
 			return 'ready';
 		}
-	
+
 		return 'repeat';
 	}
-	
+
 	// Phase 4, now we loop through our saved product data in the options table and begin importing the products into the posts table.
 	function phase4() {
-	
+
 		$this->phase = 4;
-		
+
 		$this->count_iteration();
-				
+
 		// Get products to update
 		$products = $this->select_products_for_update();
-		
+
 		// There are no products, move to phase 5.
 		if ( !is_array( $products ) || empty( $products ) ) {
 			return 'skip';
 		}
-				
+
 		// Defer counting.
 		$this->defer_counting( TRUE );
-				
+
 		// Loop through products, importing and then removing from options array.
 		foreach ( $products as $product_data ) {
-			
+
 			$product = unserialize( $product_data['data'] );
-						
-			// Let the integration plugin(s) handle the group of products for this set.
-			foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-				do_action( "dfrps_action_do_products_{$cpt}", array( 'products' => array( $product ) ), $this->set );
-			}
-			
-			$this->delete_product_from_table( $product['_id'] );			
-			
+
+			// Let the integration plugin handle the group of products for this set.
+			do_action( "dfrps_action_do_products_{$this->get_cpt_type()}", array( 'products' => array( $product ) ), $this->set );
+
+			$this->delete_product_from_table( $product['_id'] );
+
 		}
-				
+
 		// Reactivate term counting.
 		$this->defer_counting( FALSE );
-		
+
 		return 'repeat';
-				
+
 	}
-	
+
 	// Phase 5, clean up and finalize.
 	function phase5() {
-	
+
 		$this->phase = 5;
-		
+
 		$this->count_iteration();
-				
-		if( $this->is_first_pass() ) {	
-			// Set postprocess incomplete for each CPT that this set imports into.
-			foreach ( $this->get_cpts_to_import_into() as $cpt ) {
-				update_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $cpt, false );
-			}
+
+		if( $this->is_first_pass() ) {
+			// Set postprocess incomplete for cpt type that this set imports into.
+			update_post_meta( $this->set['ID'], '_dfrps_postprocess_complete_' . $this->get_cpt_type(), FALSE );
 		}
-				
-		do_action( 'dfrps_postprocess', $this );
-		
+
+		do_action( 'dfrps_postprocess-' . $this->get_cpt_type(), $this );
+
 		// Check if preprocess is complete (detemined by importer scripts)
 		$postprocess_complete = $this->postprocess_complete_check();
-		
+
 		if ( $postprocess_complete ) {
 			$this->delete_first_passes();
 			$next_update_time = dfrps_get_next_update_time();

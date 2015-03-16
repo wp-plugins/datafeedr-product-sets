@@ -120,7 +120,7 @@ function dfrps_ajax_batch_import_images() {
 	check_ajax_referer( 'dfrps_ajax_nonce', 'dfrps_security' );
 	
 	$do_import = get_option( 'dfrps_do_batch_image_import', FALSE );
-
+	
 	if ( ! $do_import ) {
 		echo 'Stopped'; // Don't translate this. We use this value on the other side.
 		die;
@@ -189,129 +189,131 @@ function dfrps_ajax_dashboard() {
 	$post_title			= get_the_title( $postid );
 	$post_status 		= get_post_status( $postid );
 	$meta 				= get_post_custom( $postid );
-	$update_phase 		= intval( $meta['_dfrps_cpt_update_phase'][0] );
+	$type				= get_post_meta( $postid, '_dfrps_cpt_type', TRUE );
+	$update_phase 		= ( isset( $meta['_dfrps_cpt_update_phase'][0] ) ) ? intval( $meta['_dfrps_cpt_update_phase'][0] ) : 0;
 	$next_update_time 	= isset( $meta['_dfrps_cpt_next_update_time'][0] ) ? $meta['_dfrps_cpt_next_update_time'][0] : false;
 	$last_update_time 	= $meta['_dfrps_cpt_last_update_time_completed'][0];
 	$temp_query 		= isset( $meta['_dfrps_cpt_temp_query'][0] ) ? $meta['_dfrps_cpt_temp_query'][0] : false;
 	$saved_query 		= isset( $meta['_dfrps_cpt_query'][0] ) ? $meta['_dfrps_cpt_query'][0] : false;
-	$categories 		= isset( $meta['_dfrps_cpt_categories'][0] ) ? maybe_unserialize( $meta['_dfrps_cpt_categories'][0] ) : false; // a:1:{s:7:"product";a:0:{}}
+	$term_ids			= dfrps_get_cpt_terms( $postid, FALSE );
 	$links				= array();
 		
 	$cats_query = false;
-	if ( is_array( $categories ) ) {
-		$cpts = array_keys( $categories );
-		if ( !empty( $cpts ) ) {
-			$registered_cpts = get_option( 'dfrps_registered_cpts', array() );
-			foreach ( $cpts as $cpt ) {
-				$term_ids = $categories[$cpt];
-				$tax = $registered_cpts[$cpt]['taxonomy'];
-				if ( !empty( $term_ids ) ) {
-					$cats_query = true;
-					foreach ( $term_ids as $id ) {
-						$term = get_term( $id, $tax );
-						if ( $term->count > 0 ) {
-							$links[] = array( 
-								'name' => $term->name,
-								'url' => esc_url( get_term_link( $term, $tax ) ),
-							);
-						}
-					}
-				}
+	if ( $term_ids && !empty( $type ) ) {
+		$registered_cpts = get_option( 'dfrps_registered_cpts', array() );
+		$tax = $registered_cpts[$type]['taxonomy'];
+		$cats_query = true;
+		foreach ( $term_ids as $id ) {
+			$term = get_term( $id, $tax );
+			if ( is_object( $term ) && isset( $term->count ) && $term->count > 0 ) {
+				$links[] = array( 
+					'name' => $term->name,
+					'url' => esc_url( get_term_link( $term, $tax ) ),
+				);
 			}
 		}
 	}
 
-	// Status: auto-draft
-	if ( $post_status != 'publish' && $post_status != 'future' ) {
-		
-		$title_class 	= ( $post_title != '' && $post_title != __( 'Auto Draft' ) ) ? ' dfrps_dashboard_step_completed' : '';
-		$temp_class 	= ( $temp_query != '' ) ? ' dfrps_dashboard_step_completed' : '';
-		$saved_class 	= ( $saved_query != '' ) ? ' dfrps_dashboard_step_completed' : '';
-		$cats_class 	= ( $cats_query ) ? ' dfrps_dashboard_step_completed' : '';
-			
-		$html .= '<div state="00"></div>';
-		$html .= '<p><span class="dashicons dashicons-smiley"></span> ' . __( 'Let\'s get started on a new Product Set!', DFRPS_DOMAIN ) . '</p>';
-		$html .= '<ol>';
-		$html .= '<li id="dfrps_step_title" class="' . $title_class . '">' . __( 'Title your Product Set.', DFRPS_DOMAIN ) . '</li>';
-		$html .= '<li id="dfrps_step_search" class="' . $temp_class . '">' . __( 'Search for products.', DFRPS_DOMAIN ) . '</li>';
-		$html .= '<li id="dfrps_step_save" class="' . $saved_class . '">' . __( ' Click <strong>[Add as Saved Search]</strong> when you\'re happy with search results.', DFRPS_DOMAIN ) . '</li>';
-		$html .= '<li id="dfrps_step_category" class="' . $cats_class . '">' . __( 'Select a category to import into.', DFRPS_DOMAIN ) . '</li>';
-		$html .= '<li id="dfrps_step_publish">' . __( 'Click the <strong>[Publish]</strong> button to import these products into your site.', DFRPS_DOMAIN ) . '</li>';
-		$html .= '</ol>';
-	}
-	
-	// Status: publish
-	if ( $post_status == 'publish' || $post_status == 'future' ) {
-				
-		if ( $update_phase > 0 ) {
-			
-			$percent = dfrps_percent_complete( $postid );
-			
-			if ( $last_update_time == 0 ) {
-				
-				$html .= '<div state="updating_' . $percent . '"></div>';
-				$html .= '<p><span class="dashicons dashicons-upload"></span>' . __( 'The products in this Product Set are currently being imported into your site.', DFRPS_DOMAIN ) . '</p>';
-				
-			} else {
-				
-				$html .= '<div state="updating_' . $percent . '"></div>';
-				$html .= '<p><span class="dashicons dashicons-upload"></span>' . __( 'The products in this Product Set are currently being updated.', DFRPS_DOMAIN ) . '</p>';
-			}
-			
-			if ( $percent ) {
-				$html .= dfrps_progress_bar( $percent );
-			}
-			
-		} elseif ( $last_update_time == 0 ) {
-		
-			if ( $post_status == 'future' ) {
-		
-				$html .= '<div state="future"></div>';
-				$html .= '<p><span class="dashicons dashicons-clock"></span> ' . __( 'This Product Set is scheduled to be published at a future date. The products in this Set will be imported when the Set becomes published.', DFRPS_DOMAIN ) . '</p>';
-			
-			} else {
-		
+	// Product Set 'type' is inactive. Just show message and don't show next update time or [Bump] button.
+	if ( ! dfrps_set_is_active( $type ) ) {
+
+		$html .= '<div state="inactive_type"></div>';
+		$html .= '<p><span class="dashicons dashicons-flag"></span> ' . __( 'This Product Set is inactive. To re-activate this Product Set, install and activate the importer plugin responsible for importing products into the "' . $type . '" custom post type.', DFRPS_DOMAIN ) . '</p>';
+
+	} else {
+
+		// Status: auto-draft
+		if ( $post_status != 'publish' && $post_status != 'future' ) {
+
+			$title_class = ( $post_title != '' && $post_title != __( 'Auto Draft' ) ) ? ' dfrps_dashboard_step_completed' : '';
+			$temp_class  = ( $temp_query != '' ) ? ' dfrps_dashboard_step_completed' : '';
+			$saved_class = ( $saved_query != '' ) ? ' dfrps_dashboard_step_completed' : '';
+			$cats_class  = ( $cats_query ) ? ' dfrps_dashboard_step_completed' : '';
+
+			$html .= '<div state="00"></div>';
+			$html .= '<p><span class="dashicons dashicons-smiley"></span> ' . __( 'Let\'s get started on a new Product Set!', DFRPS_DOMAIN ) . '</p>';
+			$html .= '<ol>';
+			$html .= '<li id="dfrps_step_title" class="' . $title_class . '">' . __( 'Title your Product Set.', DFRPS_DOMAIN ) . '</li>';
+			$html .= '<li id="dfrps_step_search" class="' . $temp_class . '">' . __( 'Search for products.', DFRPS_DOMAIN ) . '</li>';
+			$html .= '<li id="dfrps_step_save" class="' . $saved_class . '">' . __( ' Click <strong>[Add as Saved Search]</strong> when you\'re happy with search results.', DFRPS_DOMAIN ) . '</li>';
+			$html .= '<li id="dfrps_step_category" class="' . $cats_class . '">' . __( 'Select a category to import into.', DFRPS_DOMAIN ) . '</li>';
+			$html .= '<li id="dfrps_step_publish">' . __( 'Click the <strong>[Publish]</strong> button to import these products into your site.', DFRPS_DOMAIN ) . '</li>';
+			$html .= '</ol>';
+		}
+
+		// Status: publish
+		if ( $post_status == 'publish' || $post_status == 'future' ) {
+
+			if ( $update_phase > 0 ) {
+
+				$percent = dfrps_percent_complete( $postid );
+
+				if ( $last_update_time == 0 ) {
+
+					$html .= '<div state="updating_' . $percent . '"></div>';
+					$html .= '<p><span class="dashicons dashicons-upload"></span>' . __( 'The products in this Product Set are currently being imported into your site.', DFRPS_DOMAIN ) . '</p>';
+
+				} else {
+
+					$html .= '<div state="updating_' . $percent . '"></div>';
+					$html .= '<p><span class="dashicons dashicons-upload"></span>' . __( 'The products in this Product Set are currently being updated.', DFRPS_DOMAIN ) . '</p>';
+				}
+
+				if ( $percent ) {
+					$html .= dfrps_progress_bar( $percent );
+				}
+
+			} elseif ( $last_update_time == 0 ) {
+
+				if ( $post_status == 'future' ) {
+
+					$html .= '<div state="future"></div>';
+					$html .= '<p><span class="dashicons dashicons-clock"></span> ' . __( 'This Product Set is scheduled to be published at a future date. The products in this Set will be imported when the Set becomes published.', DFRPS_DOMAIN ) . '</p>';
+
+				} else {
+
+					$html .= '<div state="queued"></div>';
+					$html .= '<p><span class="dashicons dashicons-calendar"></span> ' . __( 'The products in this Product Set are queued to update on ', DFRPS_DOMAIN ) . date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), $next_update_time ) . '.</p>';
+					$html .= '<p><span class="dashicons dashicons-info"></span><em>' . __( 'Actual update time is determined by its place in the queue as well as the next scheduled cron.', DFRPS_DOMAIN ) . '</em></p>';
+
+				}
+
+			} elseif ( ( $last_update_time + 60 ) > date_i18n( 'U' ) ) {
+
+				$html .= '<div state="recently_completed"></div>';
+				$html .= '<p><span class="dashicons dashicons-yes"></span> ' . __( 'This Product Set completed a full product update less than 1 minute ago.', DFRPS_DOMAIN ) . '</p>';
+
+				$num_links = count( $links );
+				if ( $num_links > 0 ) {
+					$html .= '<p><span class="dashicons dashicons-welcome-view-site"></span> ' . __( 'View category: ', DFRPS_DOMAIN );
+					$i = 1;
+					foreach ( $links as $link ) {
+						$html .= '<a href="' . $link['url'] . '" target="_blank">' . $link['name'] . '</a>';
+						$i ++;
+						if ( $i <= $num_links ) {
+							$html .= ', ';
+						}
+					}
+					$html . '</p>';
+				}
+
+			} elseif ( date_i18n( 'U' ) > $next_update_time ) {
+
 				$html .= '<div state="queued"></div>';
 				$html .= '<p><span class="dashicons dashicons-calendar"></span> ' . __( 'The products in this Product Set are queued to update on ', DFRPS_DOMAIN ) . date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), $next_update_time ) . '.</p>';
 				$html .= '<p><span class="dashicons dashicons-info"></span><em>' . __( 'Actual update time is determined by its place in the queue as well as the next scheduled cron.', DFRPS_DOMAIN ) . '</em></p>';
 
+			} else {
+
+				$html .= '<div state="scheduled"></div>';
+				$html .= '<p><span class="dashicons dashicons-calendar"></span> ' . __( 'The products in this Product Set are scheduled to update on ', DFRPS_DOMAIN ) . date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), $next_update_time ) . '.</p>';
+				$html .= '<p>
+					<a href="#" class="button" id="dfrps_set_next_update_time_to_now">' . __( 'Bump', DFRPS_DOMAIN ) . '</a><br />
+					<small><em>' . __( 'Bump Product Set to front of update queue.', DFRPS_DOMAIN ) . '</em></small>
+				</p>';
 			}
-			
-		} elseif ( ( $last_update_time + 60 ) > date_i18n('U') ) {
-		
-			$html .= '<div state="recently_completed"></div>';
-			$html .= '<p><span class="dashicons dashicons-yes"></span> ' . __( 'This Product Set completed a full product update less than 1 minute ago.', DFRPS_DOMAIN ) . '</p>';
-			
-			$num_links = count( $links );
-			if ( $num_links > 0 ) {
-				$html .= '<p><span class="dashicons dashicons-welcome-view-site"></span> ' . __( 'View category: ', DFRPS_DOMAIN );
-				$i=1;
-				foreach ( $links as $link ) {
-					$html .= '<a href="' . $link['url'] . '" target="_blank">' . $link['name'] . '</a>';
-					$i++;
-					if ( $i <= $num_links ) {
-						$html .= ', ';
-					}
-				}
-				$html . '</p>';
-			}
-				
-		} elseif ( date_i18n('U') > $next_update_time ) {
-		
-			$html .= '<div state="queued"></div>';
-			$html .= '<p><span class="dashicons dashicons-calendar"></span> ' . __( 'The products in this Product Set are queued to update on ', DFRPS_DOMAIN ) . date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), $next_update_time ) . '.</p>';
-			$html .= '<p><span class="dashicons dashicons-info"></span><em>' . __( 'Actual update time is determined by its place in the queue as well as the next scheduled cron.', DFRPS_DOMAIN ) . '</em></p>';
-		
-		} else {
-		
-			$html .= '<div state="scheduled"></div>';
-			$html .= '<p><span class="dashicons dashicons-calendar"></span> ' .  __( 'The products in this Product Set are scheduled to update on ', DFRPS_DOMAIN ) . date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), $next_update_time ) . '.</p>';
-			$html .= '<p>
-				<a href="#" class="button" id="dfrps_set_next_update_time_to_now">' . __( 'Bump', DFRPS_DOMAIN ) . '</a><br />
-				<small><em>' . __( 'Bump Product Set to front of update queue.', DFRPS_DOMAIN ) . '</em></small>
-			</p>';
+
 		}
-				
 	}
 		
 	echo $html;
@@ -398,8 +400,15 @@ function dfrps_ajax_update_import_into() {
 		_e( 'No post ID provided.  A post ID is required.', DFRPS_DOMAIN );
 		die;
 	}
+
+	// Set $term_ids variable.
+	$term_ids = ( isset( $_REQUEST['term_ids'] ) && ( !$_REQUEST['term_ids'] == '' ) ) ? $_REQUEST['term_ids'] : array();
+	$term_ids = array_map( 'intval', $term_ids );
+		
+	// Update 'type' and 'term ids'
+	update_post_meta( $postid, '_dfrps_cpt_terms', $term_ids );
+	update_post_meta( $postid, '_dfrps_cpt_type', $_REQUEST['type'] );
 	
-	update_post_meta( $postid, '_dfrps_cpt_import_into', $_REQUEST['cpts'] );
 	echo '';
 	die;
 }
@@ -416,40 +425,12 @@ function dfrps_ajax_update_taxonomy() {
 		_e( 'No post ID provided.  A post ID is required.', DFRPS_DOMAIN );
 		die;
 	}
-	
-	// Set $cpt variable.
-	$cpt = ( isset( $_REQUEST['cpt'] ) && ( !$_REQUEST['cpt'] == '' ) ) ? $_REQUEST['cpt'] : false;
 		
-	// If $cpt doesn't validate, show error.
-	if ( !$cpt ) {
-		_e( 'No CPT provided.  A CPT is required.', DFRPS_DOMAIN );
-		die;
-	}
+	// Get term ids.
+	$term_ids = ( isset( $_REQUEST['cids'] ) && !empty( $_REQUEST['cids'] ) ) ? $_REQUEST['cids'] : array();
 	
-	// Get cids.
-	$cids = ( isset( $_REQUEST['cids'] ) && !empty( $_REQUEST['cids'] ) ) ? $_REQUEST['cids'] : array();
-	
-	// We store the category IDs "keyed" under the post type (ie. product)
-	$categories = get_post_meta( $postid, '_dfrps_cpt_categories', true );
-	$categories[$cpt] = $cids;
-	update_post_meta( $postid, '_dfrps_cpt_categories', $categories );
-
-	// We track all categories ever associated with this Product Set.  This make it so
-	// that we can remove these categories from their respective products upon update.
-	$categories_history = get_post_meta( $postid, '_dfrps_cpt_categories_history', true );
-		
-	if ( !empty( $categories_history ) ) {
-		if ( is_array( $categories_history[$cpt] ) ) {
-			$categories_history[$cpt] = array_merge( $categories_history[$cpt], $cids );
-		} else {
-			$categories_history[$cpt] = $cids;
-		}
-	} else {
-		$categories_history[$cpt] = $cids;
-	}
-	$cpt_history = array_unique( $categories_history[$cpt] );
-	$categories_history[$cpt] = $cpt_history;
-	update_post_meta( $postid, '_dfrps_cpt_categories_history', $categories_history );
+	// Store $cids
+	update_post_meta( $postid, '_dfrps_cpt_terms', $term_ids );
 	
 	echo '';
 	die;

@@ -78,6 +78,16 @@
 	padding-bottom: 20px;
 }
 
+.dfrps_type_disabled { color: #a00; }
+
+.dfrps_type_disabled_explanation
+{
+	margin-top: 10px;
+	line-height: 1.1em;
+	font-style: italic;
+}
+
+
 .dfrps_raw_query
 {
 	float: left;

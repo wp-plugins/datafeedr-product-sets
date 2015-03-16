@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.1.1
-Stable tag: 1.1.14
+Stable tag: 1.2.0
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,13 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.2.0 - 2015-03-16 =
+* Fixed bug where configuration settings were being saved at the wrong time.
+* Added a filter to filter Product Sets by what CPT they import into.
+* Fixed formatting (removed p tags) in admin notices.
+* Added new parameter to cron SQL to check filter Product Sets by only active CPTs (ie. 'product').
+* Readied code for adding additional importers to be added (#9167)
 
 = 1.1.14 =
 * Added a check/fix for mime types that include the type of encoding. Example: "image/jpeg;charset=UTF-8" 

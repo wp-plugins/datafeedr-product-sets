@@ -8,7 +8,7 @@ Author URI: https://v4.datafeedr.com
 License: GPL v3
 Requires at least: 3.8
 Tested up to: 4.1.1
-Version: 1.1.14
+Version: 1.2.0
 
 Datafeedr Product Sets Plugin
 Copyright (C) 2014, Datafeedr - eric@datafeedr.com
@@ -32,7 +32,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Define constants.
  */
-define( 'DFRPS_VERSION', 	'1.1.14' );
+define( 'DFRPS_VERSION', 	'1.2.0' );
+define( 'DFRPS_DB_VERSION', '1.2.0' );
+define( 'DFRPS_SET_VERSION','1.2.0' );
 define( 'DFRPS_URL', 		plugin_dir_url( __FILE__ ) );
 define( 'DFRPS_PATH', 		plugin_dir_path( __FILE__ ) );
 define( 'DFRPS_BASENAME', 	plugin_basename( __FILE__ ) );
@@ -70,10 +72,10 @@ function dfrps_import_image( $post ) {
 add_action( 'admin_notices', 'dfrps_dfrapi_missing' );
 function dfrps_dfrapi_missing() {
 	if ( !defined( 'DFRAPI_BASENAME' ) ) {
-		echo '<div class="update-nag"><p>' . __( 'The <strong>Datafeedr Product Sets</strong> plugin requires that the <strong>Datafeedr API</strong> plugin be installed and activated.', DFRPS_DOMAIN );
+		echo '<div class="update-nag">' . __( 'The <strong>Datafeedr Product Sets</strong> plugin requires that the <strong>Datafeedr API</strong> plugin be installed and activated.', DFRPS_DOMAIN );
 		echo ' <a href="http://wordpress.org/plugins/datafeedr-api/">';
 		echo  __( 'Download the Datafeedr API Plugin', DFRPS_DOMAIN );
-		echo '</a></p></div>';	
+		echo '</a></div>';	
 	}
 }
 
@@ -83,10 +85,10 @@ function dfrps_dfrapi_missing() {
 add_action( 'admin_notices', 'dfrps_missing_importer' );
 function dfrps_missing_importer() {
 	if ( !dfrps_registered_cpt_exists() ) {
-		echo '<div class="update-nag" style="border-color: red;"><p>' . __( 'The <strong>Datafeedr Product Sets</strong> plugin requires an importer plugin.', DFRPS_DOMAIN );
+		echo '<div class="update-nag" style="border-color: red;">' . __( 'The <strong>Datafeedr Product Sets</strong> plugin requires an importer plugin.', DFRPS_DOMAIN );
 		echo ' <a href="http://wordpress.org/plugins/tags/dfrpsimporter">';
 		echo  __( 'Download an Importer Plugin', DFRPS_DOMAIN );
-		echo '</a></p></div>';		
+		echo '</a></div>';		
 	}
 }
 
@@ -96,10 +98,10 @@ function dfrps_missing_importer() {
 add_action( 'admin_notices', 'dfrps_default_cpt_not_selected' );
 function dfrps_default_cpt_not_selected() {
 	if ( !dfrps_default_cpt_is_selected() ) {
-		echo '<div class="update-nag" style="border-color: red;"><p>' . __( 'The <strong>Datafeedr Product Sets</strong> plugin requires you to', DFRPS_DOMAIN );
+		echo '<div class="update-nag" style="border-color: red;">' . __( 'The <strong>Datafeedr Product Sets</strong> plugin requires you to', DFRPS_DOMAIN );
 		echo ' <a href="' . admin_url( 'admin.php?page=dfrps_configuration' ) . '">';
 		echo  __( 'select a Default Custom Post Type', DFRPS_DOMAIN );
-		echo '</a>.</p></div>';		
+		echo '</a>.</div>';		
 	}
 }
 
@@ -110,10 +112,37 @@ add_action( 'admin_notices', 'dfrps_updates_disabled' );
 function dfrps_updates_disabled() {
 	$options = get_option( 'dfrps_configuration', array() );
 	if ( isset( $options['updates_enabled'] ) && $options['updates_enabled'] == 'disabled' ) {
-		echo '<div class="update-nag" style="border-color: red;"><p>' . __( 'The <strong>Datafeedr Product Sets</strong> plugin has disabled Product Set updates. Enable Product Set updates ', DFRPS_DOMAIN );
+		echo '<div class="update-nag" style="border-color: red;">' . __( 'The <strong>Datafeedr Product Sets</strong> plugin has disabled Product Set updates. Enable Product Set updates ', DFRPS_DOMAIN );
 		echo ' <a href="' . admin_url( 'admin.php?page=dfrps_configuration' ) . '">';
 		echo  __( 'here', DFRPS_DOMAIN );
-		echo '.</a></p></div>';		
+		echo '</a>.</div>';		
+	}
+}
+
+/**
+ * Notify user that their version of DFRPS is not compatible with their version of DFRPSWC
+ */
+add_action( 'admin_notices', 'dfrps_not_compatible_with_dfrpscwc' );
+function dfrps_not_compatible_with_dfrpscwc() {
+	if ( defined( 'DFRPSWC_VERSION' ) )  {
+		if ( version_compare( DFRPSWC_VERSION, '1.2.0', '<' ) ) {
+
+			$file = 'datafeedr-woocommerce-importer/datafeedr-woocommerce-importer.php';
+			$url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $file, 'upgrade-plugin_' . $file );
+
+			?>
+			
+			<div class="error">
+				<p>
+					<strong style="color:#E44532;"><?php _e( 'URGENT - ACTION REQUIRED!', DFRPS_DOMAIN ); ?></strong>
+					<br /><?php _e( 'Your version of the <strong><em>Datafeedr WooCommerce Importer</em></strong> plugin is not compatible with your version of the <strong><em>Datafeedr Product Sets</em></strong> plugin.', DFRPS_DOMAIN ); ?>
+					<br /><?php _e( 'Failure to upgrade will result in data loss. Please update your version of the <strong><em>Datafeedr WooCommerce Importer</em></strong> plugin now.', DFRPS_DOMAIN ); ?>
+					<br /><a class="button button-primary button-large" style="margin-top: 6px" href="<?php echo $url; ?>"><?php _e( 'Update Now', DFRPS_DOMAIN ); ?></a>
+				</p>
+			</div>
+		
+			<?php
+		}
 	}
 }
 

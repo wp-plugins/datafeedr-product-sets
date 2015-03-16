@@ -12,11 +12,12 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		private $page = 'dfrps_configuration';
 		private $key;
 		private $account;
+		private $options;
 
 		public function __construct() {
 			$this->key = 'dfrps_configuration';
-			$this->account = (array) get_option( 'dfrapi_account', array( 'max_length' => 50 ) );
-			add_action( 'admin_init', array( &$this, 'load_settings' ) );
+			$this->account = (array) get_option( 'dfrapi_account', array( 'max_length' => 100 ) );
+			$this->options = $this->load_settings();
 			add_action( 'admin_init', array( &$this, 'register_settings' ) );
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 			add_action( 'admin_notices', array( $this, 'admin_notice' ) );
@@ -65,6 +66,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 			echo '<div class="wrap" id="' . $this->key . '">';
 			echo '<h2>' . __( 'Configuration &#8212; Datafeedr Product Sets', DFRPS_DOMAIN ) . '</h2>';
 			echo '<form method="post" action="options.php">';
+			echo '<input type="hidden" name="dfrps_configuration_action" value="update" />';
 			wp_nonce_field( 'update-options' );
 			settings_fields( $this->page );
 			do_settings_sections( $this->page);
@@ -89,11 +91,10 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		}
 		
 		function load_settings() {
-			$this->options = array_merge( 
-				$this->default_options(), 
-				get_option( $this->key, array() ) 
-			);
-			update_option( $this->key, $this->options );
+			$default_options = $this->default_options();
+			$current_options = get_option( $this->key, array() );
+			$options = array_merge( $default_options, $current_options );
+			return $options;
 		}
 	
 		function register_settings() {
@@ -314,8 +315,14 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 		}
 		
 		function validate( $input ) {
-			
-			if ( !isset( $input ) || !is_array( $input ) || empty( $input ) ) { return $input; }
+
+			if ( ! isset( $input ) || ! is_array( $input ) || empty( $input ) ) {
+				return $input;
+			}
+
+			if ( ! isset( $_POST['dfrps_configuration_action'] ) || $_POST['dfrps_configuration_action'] != 'update' ) {
+				return $input;
+			}
 			
 			$new_input = array();
 			
