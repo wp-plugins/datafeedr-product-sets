@@ -5,8 +5,8 @@ Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
-Tested up to: 4.1.1
-Stable tag: 1.2.0
+Tested up to: 4.2-beta2
+Stable tag: 1.2.1
 
 Build sets of products to import into your website.
 
@@ -78,7 +78,13 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 
 == Changelog ==
 
-= 1.2.0 - 2015-03-16 =
+= 1.2.1 - 2015/03/23 =
+* Changed varchar(255) to varchar(50) in Update/Create Table statement to avoid "Specified key was too long; max key length is 767 bytes for query" errors (#10701).
+* Fixed some grammar in the "Fix Missing Images" message.
+* Replace spaces in Image URLs with "%20". This prevents images with spaces in the URL from failing to be imported.
+* Fixed bug where default options were not being set upon plugin being activated which caused products to not be returned in searches.
+
+= 1.2.0 - 2015/03/16 =
 * Fixed bug where configuration settings were being saved at the wrong time.
 * Added a filter to filter Product Sets by what CPT they import into.
 * Fixed formatting (removed p tags) in admin notices.

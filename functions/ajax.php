@@ -88,7 +88,7 @@ function dfrps_ajax_fix_missing_images() {
 			echo sprintf( 
 				_n( 
 					' product image is flagged to be fixed the next time it is displayed on your site.', 
-					' product images are flagged to be fixed the next they are displayed on your site.', 
+					' product images are flagged to be fixed the next time they are displayed on your site.', 
 					$update, 
 					DFRPS_DOMAIN 
 				), 

@@ -42,6 +42,7 @@ class Dfrps_Image_Importer {
 		if ( isset( $this->postmeta['_dfrps_featured_image_url'][0] ) && !empty( $this->postmeta['_dfrps_featured_image_url'][0] ) ) {
 			$image_url = $this->postmeta['_dfrps_featured_image_url'][0];
 			$image_url = ( substr( $image_url, 0, 2 ) === "//" ) ? 'http:' . $image_url : $image_url; // Handle Protocol-relative URLs
+			$image_url = str_replace( " ", "%20", $image_url ); // Replace spaces in URL with "%20".
 			return $image_url;
 		}
 		return false;

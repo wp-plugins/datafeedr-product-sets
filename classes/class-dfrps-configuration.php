@@ -75,7 +75,7 @@ if ( ! class_exists( 'Dfrps_Configuration' ) ) {
 			echo '</div>';
 		}
 		
-		function default_options() {
+		public function default_options() {
 			return array(
 				'update_interval' => 7,
 				'num_products_per_update' => 100,

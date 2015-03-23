@@ -51,7 +51,7 @@ class Dfrps_Update {
 		$sql = "
 		CREATE TABLE IF NOT EXISTS $table
 		(
-			product_id varchar(255) DEFAULT '' PRIMARY KEY,
+			product_id varchar(50) DEFAULT '' PRIMARY KEY,
 			data LONGTEXT,
 			updated TIMESTAMP
 		) $charset_collate ";

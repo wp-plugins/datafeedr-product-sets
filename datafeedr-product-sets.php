@@ -7,8 +7,8 @@ Author: datafeedr.com
 Author URI: https://v4.datafeedr.com
 License: GPL v3
 Requires at least: 3.8
-Tested up to: 4.1.1
-Version: 1.2.0
+Tested up to: 4.2-beta2
+Version: 1.2.1
 
 Datafeedr Product Sets Plugin
 Copyright (C) 2014, Datafeedr - eric@datafeedr.com
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Define constants.
  */
-define( 'DFRPS_VERSION', 	'1.2.0' );
+define( 'DFRPS_VERSION', 	'1.2.1' );
 define( 'DFRPS_DB_VERSION', '1.2.0' );
 define( 'DFRPS_SET_VERSION','1.2.0' );
 define( 'DFRPS_URL', 		plugin_dir_url( __FILE__ ) );
@@ -150,8 +150,16 @@ function dfrps_not_compatible_with_dfrpscwc() {
  * Upon plugin activation.
  */
 register_activation_hook( __FILE__, 'dfrps_activate' );
-function dfrps_activate() { 
+function dfrps_activate() {
 	dfrps_add_capabilities();
+	
+	// Add default options if they do not already exist. @since 1.2.1
+	$dfrps_configuration = get_option( 'dfrps_configuration', false );
+	if ( ! $dfrps_configuration ) {
+		require_once( DFRPS_PATH . 'classes/class-dfrps-configuration.php' );
+		$default_options = Dfrps_Configuration::default_options();
+		add_option( 'dfrps_configuration', $default_options );
+	}
 }
 
 /**
