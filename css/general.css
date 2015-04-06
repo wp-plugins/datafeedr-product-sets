@@ -1,6 +1,7 @@
 #adminmenu #toplevel_page_dfrps.menu-top div.wp-menu-image:before {
-	font-family: 'datafeedr' !important;
-	content: 'dr';
+	font-family: datafeedr !important;
+	content: "\e600" !important;
+	font-size: 1.3em !important;
 }
 
 .dfrps_help_text { }

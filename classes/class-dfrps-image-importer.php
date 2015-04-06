@@ -129,7 +129,7 @@ class Dfrps_Image_Importer {
 		}
 	
 		// Don't do if we've already checked the image status for this product
-		if ( isset( $this->postmeta['_dfrps_product_check_image'][0] ) && ( $this->postmeta['_dfrps_product_check_image'][0] == 0 ) ) {
+		if ( isset( $this->postmeta['_dfrps_product_check_image'][0] ) && ( (int) $this->postmeta['_dfrps_product_check_image'][0] == 0 ) ) {
 			return false;
 		}	
 	
