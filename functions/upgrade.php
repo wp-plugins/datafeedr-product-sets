@@ -16,6 +16,7 @@ $current_version = get_option( 'dfrps_version', DFRPS_VERSION );
  */
 if ( version_compare( $current_version, DFRPS_VERSION, '!=' ) ) {
 	dfrps_reset_update();
+	dfrps_cleanup_database();
 }
 
 /**
@@ -36,6 +37,25 @@ function dfrps_reset_update() {
 	if ( ! is_null( $set_id ) ) {
 		dfrps_reset_product_set_update( $set_id );
 	}
+
+	// Run action so importer plugins can do any cleaning up necessary.
+	do_action( 'dfrps_update_reset' );
+}
+
+/**
+ * Delete old table.
+ *
+ * This table's name has been changed to 'dfrps_temp_product_data' so we need to
+ * DROP 'dfrps_product_data' if it exists.
+ *
+ * @since 1.2.3
+ *
+ * @global object $wpdb WP Database Object.
+ */
+function dfrps_cleanup_database() {
+	global $wpdb;
+	$table = $wpdb->prefix . 'dfrps_product_data';
+	$wpdb->query( "DROP TABLE IF EXISTS $table" );
 }
 
 /**

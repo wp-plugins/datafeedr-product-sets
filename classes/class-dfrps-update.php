@@ -7,7 +7,14 @@ if ( ! class_exists( 'Dfrps_Update' ) ) {
  */
 class Dfrps_Update {
 
+	/**
+	 * @var string Name of temporary table to store product IDs and data.
+	 */
+	private $temp_product_table;
+
 	public function __construct( $post ) {
+		global $wpdb;
+		$this->temp_product_table = $wpdb->prefix . 'dfrps_temp_product_data';
 		$this->action = 'update';
 		$this->set = $post;
 		$this->config = $this->get_configuration();
@@ -46,7 +53,7 @@ class Dfrps_Update {
 	// Create temporary product table.
 	function create_temp_product_table() {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dfrps_product_data';
+		$table = $this->temp_product_table;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "
 		CREATE TABLE IF NOT EXISTS $table
@@ -63,7 +70,7 @@ class Dfrps_Update {
 	function insert_temp_product( $product ) {
 		if ( !isset( $product['_id'] ) ) { return FALSE; }
 		global $wpdb;
-		$table = $wpdb->prefix . 'dfrps_product_data';
+		$table = $this->temp_product_table;
 		$data = array( 'product_id' => $product['_id'], 'data' => serialize( $product ) );
 		$result = $wpdb->replace( $table, $data );
 	   	// return TRUE; Removed in v1.1.8
@@ -72,7 +79,7 @@ class Dfrps_Update {
 	// Get products from temp table to update.
 	function select_products_for_update() {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dfrps_product_data';
+		$table = $this->temp_product_table;
 		$sql = "SELECT * FROM $table ORDER BY updated DESC LIMIT " .  $this->config['num_products_per_update'];
 		$products = $wpdb->get_results( $sql, ARRAY_A );
 		return $products;
@@ -81,14 +88,14 @@ class Dfrps_Update {
 	// Delete a product record from the temp table.
 	function delete_product_from_table( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dfrps_product_data';
+		$table = $this->temp_product_table;
 		$wpdb->delete( $table, array( 'product_id' => $id ) );
 	}
 
 	// Drop the temp product table.
 	function drop_temp_product_table() {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dfrps_product_data';
+		$table = $this->temp_product_table;
 		$wpdb->query( "DROP TABLE IF EXISTS $table" );
 	}
 
@@ -506,6 +513,7 @@ class Dfrps_Update {
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_next_update_time', $next_update_time );
 			update_post_meta( $this->set['ID'], '_dfrps_cpt_last_update_time_completed', date_i18n( 'U' ) );
 			do_action( 'dfrps_set_update_complete', $this->set );
+			$this->drop_temp_product_table();
 			return 'complete';
 		}
 		

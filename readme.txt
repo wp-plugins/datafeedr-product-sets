@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.2-beta4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,12 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.2.3 - 2015/04/15 =
+* Renamed temp product table from 'dfrps_product_data' to 'dfrps_temp_product_data'.
+* Added function to DROP dfrps_temp_product_data table after update is complete.
+* DROP'd 'dfrps_product_data' table manually as it would have been stranded.
+* Added new action 'dfrps_update_reset' to dfrps_reset_update() function.
 
 = 1.2.2 - 2015/04/06 =
 * Typecasted '_dfrps_product_check_image' as (int) value so it could be compared to 0.
