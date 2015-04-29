@@ -60,7 +60,9 @@ class Dfrps_Update {
 		(
 			product_id varchar(50) DEFAULT '' PRIMARY KEY,
 			data LONGTEXT,
-			updated TIMESTAMP
+			uid varchar(13) NOT NULL default '',
+			updated TIMESTAMP,
+ 			KEY uid (uid)
 		) $charset_collate ";
 	   	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
@@ -68,7 +70,7 @@ class Dfrps_Update {
 
 	// Insert into temporary product table.
 	function insert_temp_product( $product ) {
-		if ( !isset( $product['_id'] ) ) { return FALSE; }
+		if ( !isset( $product['_id'] ) ) { return false; }
 		global $wpdb;
 		$table = $this->temp_product_table;
 		$data = array( 'product_id' => $product['_id'], 'data' => serialize( $product ) );
@@ -78,10 +80,34 @@ class Dfrps_Update {
 
 	// Get products from temp table to update.
 	function select_products_for_update() {
+
 		global $wpdb;
-		$table = $this->temp_product_table;
-		$sql = "SELECT * FROM $table ORDER BY updated DESC LIMIT " .  $this->config['num_products_per_update'];
-		$products = $wpdb->get_results( $sql, ARRAY_A );
+
+		// Set temp product table variable name.
+		$table_name = $this->temp_product_table;
+
+		// Set how many products should be updated in one pass.
+		$limit = ( isset( $this->config['num_products_per_update'] ) ) ? intval( $this->config['num_products_per_update'] ) : 100;
+
+		// Allow for 5 minutes to import 20 products. That should be enough...
+		$mysql_interval = abs( ceil( $limit / 20 ) );
+
+		// Update the temp product table to avoid the table remaining 'locked' (ticket #10889).
+		$wpdb->query( "UPDATE $table_name SET uid='' WHERE uid != '' AND updated < DATE_SUB(NOW(), INTERVAL $mysql_interval MINUTE)" );
+
+		// If other uids are in the table that means the update is already in progress. Return 'busy'. (ticket #10886)
+		$pre_check = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name WHERE uid != ''" );
+		if ( intval( $pre_check ) ) {
+			return 'busy';
+		}
+
+		// Set a unique ID and update temp table with UID to avoid updating same product twice (ticket #10866).
+		$uid = uniqid();
+		$wpdb->query( "UPDATE $table_name SET uid='$uid' WHERE uid='' ORDER BY updated DESC LIMIT " . $limit );
+
+		// Get products from temp table to update.
+		$products = $wpdb->get_results( "SELECT * FROM $table_name WHERE uid='$uid' ORDER BY updated DESC", ARRAY_A );
+
 		return $products;
 	}
 
@@ -102,9 +128,14 @@ class Dfrps_Update {
 	// Run update.
 	function update() {
 
+		wp_suspend_cache_addition( true );
+		wp_suspend_cache_invalidation( true );
+
 		// Set transient to 5 minutes time + cron interval.
 		$cron_interval = intval( $this->config['cron_interval'] );
+		$use_cache = wp_using_ext_object_cache( false );
 		set_transient( 'dfrps_doing_update', 1, ( ( MINUTE_IN_SECONDS * 5 ) + $cron_interval ) );
+		wp_using_ext_object_cache( $use_cache );
 
 		// Begin endless loop
 		while( 1 ) {
@@ -155,7 +186,12 @@ class Dfrps_Update {
 
 		} // while( 1 ) {
 
+		$use_cache = wp_using_ext_object_cache( false );
 		delete_transient( 'dfrps_doing_update' );
+		wp_using_ext_object_cache( $use_cache );
+
+		wp_suspend_cache_addition( false );
+		wp_suspend_cache_invalidation( false );
 	}
 
 	// Count each iteraction of the update process.
@@ -462,8 +498,13 @@ class Dfrps_Update {
 		// Get products to update
 		$products = $this->select_products_for_update();
 
+		// This means the update is already in progress. Tries to prevent race condition.
+		if ( $products == 'busy' ) {
+			return 'repeat';
+		}
+
 		// There are no products, move to phase 5.
-		if ( !is_array( $products ) || empty( $products ) ) {
+		if ( ! is_array( $products ) || empty( $products ) ) {
 			return 'skip';
 		}
 

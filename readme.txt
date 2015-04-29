@@ -5,8 +5,8 @@ Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
-Tested up to: 4.2
-Stable tag: 1.2.3
+Tested up to: 4.3-alpha
+Stable tag: 1.2.4
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,13 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.2.4 - 2015/04/29 =
+* Added new 'uid' column to 'dfrps_temp_product_data' table. (#10866)
+* Added uniqid() to 'dfrps_temp_product_data' table to avoid race conditions during updates. (#10866)
+* Added cache bypassing functions when getting transients. (#10866)
+* Added code to suspend cache addition and invalidation during import/update. (#10910)
+* Added call to array_unique() in the dfrps_get_all_post_ids_by_set_id() function to avoid post ID duplication.
 
 = 1.2.3 - 2015/04/15 =
 * Renamed temp product table from 'dfrps_product_data' to 'dfrps_temp_product_data'.

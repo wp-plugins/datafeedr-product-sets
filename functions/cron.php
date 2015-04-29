@@ -43,7 +43,9 @@ add_action( 'dfrps_cron', 'dfrps_get_product_set_to_update' );
 function dfrps_get_product_set_to_update() {
 
 	// Check if an update is already running.
+	$use_cache = wp_using_ext_object_cache( false );
 	$doing_update = get_transient( 'dfrps_doing_update' );
+	wp_using_ext_object_cache( $use_cache );
 	if ( $doing_update !== false ) {
 		return true;
 	}

@@ -180,7 +180,7 @@ function dfrps_get_all_post_ids_by_set_id( $set_id ) {
 		$ids[] = $post['ID'];
 	}
 	
-	return $ids;
+	return array_unique( $ids );
 }
 
 /**
