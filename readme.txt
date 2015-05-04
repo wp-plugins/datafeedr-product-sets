@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
 Tested up to: 4.3-alpha
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,9 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.2.5 - 2015/05/04 =
+* Added cache bypassing functions to the Dfrps_Image_Importer class.
 
 = 1.2.4 - 2015/04/29 =
 * Added new 'uid' column to 'dfrps_temp_product_data' table. (#10866)

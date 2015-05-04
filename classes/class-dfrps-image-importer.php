@@ -22,10 +22,19 @@ class Dfrps_Image_Importer {
 	 * @param object $post Expects a full $post object of the product we're importing an image for.
 	 */	
 	public function __construct ( $post ) {
+
+		wp_suspend_cache_addition( true );
+		wp_suspend_cache_invalidation( true );
+		$use_cache = wp_using_ext_object_cache( false );
+
 		$this->post = $post;
 		$this->postmeta = get_post_custom( $post->ID );
 		$this->image_url = $this->set_image_url();
 		$this->import();
+
+		wp_suspend_cache_addition( false );
+		wp_suspend_cache_invalidation( false );
+		wp_using_ext_object_cache( $use_cache );
 	}
 
 	/**
@@ -224,7 +233,7 @@ class Dfrps_Image_Importer {
 			$file_array['name'] = $this->post->post_title . '.' . $matches[1];
 		} else {
 			$mime = wp_remote_retrieve_header( wp_remote_get( $this->image_url ), 'content-type' );
-			$file_array['name'] = $this->post->post_title . '.' . $this->convert_mime_to_ext( $mime );	
+			$file_array['name'] = $this->post->post_title . '.' . $this->convert_mime_to_ext( $mime );
 		}
 	
 		// Download file to temp location.
