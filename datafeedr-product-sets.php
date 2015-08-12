@@ -7,7 +7,7 @@ Author: datafeedr.com
 Author URI: https://v4.datafeedr.com
 License: GPL v3
 Requires at least: 3.8
-Tested up to: 4.3-alpha
+Tested up to: 4.3
 Version: 1.2.5
 
 Datafeedr Product Sets Plugin
