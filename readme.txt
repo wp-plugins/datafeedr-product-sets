@@ -5,7 +5,7 @@ Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
-Tested up to: 4.3-beta
+Tested up to: 4.3
 Stable tag: 1.2.5
 
 Build sets of products to import into your website.
