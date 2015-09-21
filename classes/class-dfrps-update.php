@@ -70,12 +70,14 @@ class Dfrps_Update {
 
 	// Insert into temporary product table.
 	function insert_temp_product( $product ) {
-		if ( !isset( $product['_id'] ) ) { return false; }
+		if ( ! isset( $product['_id'] ) || ! isset( $product['url'] ) ) {
+			return false;
+		}
 		global $wpdb;
-		$table = $this->temp_product_table;
-		$data = array( 'product_id' => $product['_id'], 'data' => serialize( $product ) );
+		$table  = $this->temp_product_table;
+		$data   = array( 'product_id' => $product['_id'], 'data' => serialize( $product ) );
 		$result = $wpdb->replace( $table, $data );
-	   	// return TRUE; Removed in v1.1.8
+		// return TRUE; Removed in v1.1.8
 	}
 
 	// Get products from temp table to update.

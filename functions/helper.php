@@ -195,7 +195,7 @@ function dfrps_format_product_list( $data, $context ) {
 	// Query info
 	if ( isset( $data['params'] ) && !empty( $data['params'] ) ) { ?>
 		<div class="dfrps_api_info" id="dfrps_raw_api_query">
-			<div class="dfrps_head"><?php _e( 'API Reqest', DFRPS_DOMAIN ); ?></div>
+			<div class="dfrps_head"><?php _e( 'API Request', DFRPS_DOMAIN ); ?></div>
 			<div class="dfrps_query"><span><?php echo dfrapi_display_api_request( $data['params'] ); ?></span></div>
 		</div>
 	<?php }
@@ -239,6 +239,11 @@ function dfrps_more_info_rows( $product ) {
 				<a href="'.$v.'" target="_blank" title="'.__('Open image in new window.', DFRPS_DOMAIN).'">'.esc_attr( $v ).'</a>
 				<br />
 				<img src="'.$v.'" />
+			</td>';
+		} elseif ( $k == '_wc_url' ) {
+			echo '
+			<td class="value dfrps_force_wrap">
+				<a href="'.$v.'" target="_blank" title="'.__('Search for product in store.', DFRPS_DOMAIN).'">'.esc_attr( $v ).'</a>
 			</td>';
 		} elseif ( $k == 'url' ) {
 			echo '
@@ -616,4 +621,67 @@ function dfrps_upgrade_product_set_to_120( $post ) {
 	return true;
 }
 
+/**
+ * Returns a Post Object which contains a matching meta_key and meta_value. If
+ * no Post Object is found, then returns false.
+ *
+ * Example:
+ *
+ *      $meta_key   = '_dfrps_product_id';
+ *      $meta_value = '3853200001322292';
+ *      $compare    = 'IN';
+ *
+ *      $post = dfrps_get_post_obj_by_meta_value( $meta_key, $meta_value, $compare );
+ *
+ * @since 1.2.6
+ *
+ * @param string       $meta_key The post_meta key.
+ * @param string|array $meta_value The post_meta value.
+ * @param string       $compare The operator to use in the query.
+ *
+ * @return bool|WP_Post Return Post Object or false if nothing found.
+ */
+function dfrps_get_post_obj_by_postmeta( $meta_key, $meta_value, $compare ) {
+
+	$args = array(
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'post_type'      => 'any',
+		'post_status'    => array(
+			'publish',
+			'pending',
+			'draft',
+			'auto-draft',
+			'future',
+			'private',
+			'inherit',
+			'trash',
+		),
+		'posts_per_page' => '1',
+		'meta_query'     => array(
+			array(
+				'key'     => $meta_key,
+				'value'   => $meta_value,
+				'compare' => $compare,
+			)
+		)
+	);
+
+	$posts = new WP_Query( $args );
+
+	if ( $posts->have_posts() ) {
+
+		while ( $posts->have_posts() ) {
+			$posts->the_post();
+
+			return $posts->post;
+		}
+
+	}
+
+	wp_reset_postdata();
+
+	return false;
+
+}
 
