@@ -642,6 +642,7 @@ font-size: 90%;
 				box-shadow: none;
 			}
 
+			.dfrps_meta_box.no_box > h2,
 			.dfrps_meta_box.no_box > h3,
 			.dfrps_meta_box.no_box > .handlediv { display: none; }
 
@@ -659,7 +660,7 @@ font-size: 90%;
 				padding-right: 10px;
 			}
 
-			.datafeedr-productset_admin #poststuff h2
+			.datafeedr-productset_admin h2#dfrps_cpt_tabs
 			{
 				padding-bottom: 0;
 				padding-left: 5px;

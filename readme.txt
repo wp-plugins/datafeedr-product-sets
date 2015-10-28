@@ -5,8 +5,8 @@ Tags: datafeedr, product sets, dfrapi, dfrps, import, products
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.8
-Tested up to: 4.4-alpha
-Stable tag: 1.2.6
+Tested up to: 4.4-beta1
+Stable tag: 1.2.7
 
 Build sets of products to import into your website.
 
@@ -77,6 +77,10 @@ Our support area can be found here: [https://v4.datafeedr.com/support](https://v
 6. Configuration: Advanced Update Settings
 
 == Changelog ==
+
+= 1.2.7 - 2015/10/28 =
+* Fixed CSS on Product Set add/edit page to handle the change of h3 tags to h2 for metabox titles.
+* Added priority arg to admin_body_class filter in ctp class.
 
 = 1.2.6 - 2015/09/21 =
 * Added code to updater to prevent it from importing any product without a "url" field. This is also related to the fixed "quirk" in the DFRAPI plugin (version 1.0.29).

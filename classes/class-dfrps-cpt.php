@@ -37,7 +37,7 @@ class Dfrps_Cpt {
 		add_filter( 'postbox_classes_'.DFRPS_CPT.'_div_dfrps_tab_included', 	array( $this, 'hide_meta_box' ) );
 		add_filter( 'postbox_classes_'.DFRPS_CPT.'_div_dfrps_tab_blocked', 		array( $this, 'hide_meta_box' ) );
 		add_filter( 'enter_title_here', 										array( $this, 'enter_title_here' ) );
-		add_filter( 'admin_body_class', 										array( $this, 'admin_body_class' ) );
+		add_filter( 'admin_body_class', 										array( $this, 'admin_body_class' ), 99999 );
 		add_filter( 'page_row_actions', 										array( $this, 'remove_view_row_action' ), 10, 1 );		
 		add_filter( 'wpseo_use_page_analysis', 									array( $this, 'remove_all_wpseo_stuff' ) );
 		add_filter( 'post_updated_messages', 									array( $this, 'post_updated_messages' ) );
